@@ -4,221 +4,207 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Veilara — Combat Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-deepest: #0a0806;
-    --bg-deep: #110e0a;
-    --bg-card: #1a1510;
-    --bg-raised: #221c14;
-    --bg-hover: #2a231a;
-    --border: #3d3020;
-    --border-bright: #6b5230;
-    --gold: #c9922a;
-    --gold-light: #e8b84b;
-    --gold-dim: #7a5a1a;
-    --crimson: #8b1a1a;
-    --crimson-light: #c0392b;
-    --crimson-glow: rgba(139,26,26,0.3);
-    --jade: #1a6b4a;
-    --jade-light: #27ae60;
-    --text-primary: #e8dcc8;
-    --text-secondary: #a89070;
-    --text-muted: #6b5a40;
-    --text-gold: #c9922a;
-    --shadow-deep: 0 8px 32px rgba(0,0,0,0.8);
-    --shadow-card: 0 4px 16px rgba(0,0,0,0.6);
-    --glow-gold: 0 0 20px rgba(201,146,42,0.3);
-    --glow-crimson: 0 0 20px rgba(139,26,26,0.4);
+    --bg: #2a0505;
+    --bg-warm: #fff2d2;
+    --bg-card: #fff2dc;
+    --bg-raised: #fff2c8;
+    --bg-hover: #f0ebe0;
+    --border: #d4c8b0;
+    --border-dark: #b8a88a;
+    --gold: #9a6e2a;
+    --gold-light: #c4903a;
+    --gold-dim: #d4b87a;
+    --gold-bg: rgba(196,144,58,0.08);
+    --crimson: #b32c2c;
+    --crimson-light: #b03030;
+    --crimson-bg: rgba(137, 32, 32, 0.08);
+    --jade: #1e6e48;
+    --jade-light: #27905e;
+    --jade-bg: rgba(30,110,72,0.08);
+    --sky: #2a5a8b;
+    --sky-bg: rgba(42,90,139,0.08);
+    --text-primary: #2c2416;
+    --text-secondary: #5a4a32;
+    --text-muted: #8a7a62;
+    --text-gold: #9a6e2a;
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+    --shadow: 0 2px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 6px 24px rgba(0,0,0,0.12);
+    --radius: 6px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background-color: var(--bg-deepest);
+    background: var(--bg);
     background-image:
-      radial-gradient(ellipse at 20% 0%, rgba(139,26,26,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, rgba(201,146,42,0.06) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9922a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      radial-gradient(ellipse at 0% 0%, rgba(196,144,58,0.06) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239a6e2a' fill-opacity='0.04'%3E%3Cpath d='M40 0L42 38H80L48 50L60 80L40 58L20 80L32 50L0 38H38z'/%3E%3C/g%3E%3C/svg%3E");
     color: var(--text-primary);
-    font-family: 'Crimson Pro', Georgia, serif;
+    font-family: 'Lora', Georgia, serif;
     min-height: 100vh;
   }
 
   /* ─── HEADER ─── */
   .site-header {
-    text-align: center;
-    padding: 32px 20px 0;
-    position: relative;
+    background: var(--bg-raised);
+    border-bottom: 2px solid var(--gold-dim);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
   }
-  .site-header::after {
-    content: '';
-    display: block;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin-top: 24px;
-    opacity: 0.5;
-  }
+  .header-brand { display: flex; align-items: baseline; gap: 14px; }
   .site-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.6rem, 4vw, 2.8rem);
-    color: var(--gold-light);
-    letter-spacing: 0.1em;
-    text-shadow: 0 0 40px rgba(201,146,42,0.5), 0 2px 4px rgba(0,0,0,0.8);
-    line-height: 1.1;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.06em;
   }
   .site-subtitle {
     font-family: 'Cinzel', serif;
-    font-size: 0.8rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
-    letter-spacing: 0.3em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    margin-top: 6px;
   }
-  .ornament {
-    color: var(--gold-dim);
-    font-size: 1.2rem;
-    margin: 0 12px;
-    opacity: 0.6;
-  }
+  .ornament { color: var(--gold-dim); }
 
-  /* ─── NAV TABS ─── */
+  /* ─── NAV ─── */
   .nav-tabs {
     display: flex;
-    justify-content: center;
-    gap: 0;
-    padding: 20px 20px 0;
-    flex-wrap: wrap;
+    gap: 4px;
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
   }
   .nav-tab {
     font-family: 'Cinzel', serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    padding: 10px 28px;
+    padding: 8px 22px;
     background: transparent;
-    border: 1px solid var(--border);
-    border-bottom: none;
+    border: none;
+    border-radius: 4px;
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    top: 1px;
+    transition: all 0.18s;
   }
-  .nav-tab:first-child { border-radius: 4px 0 0 0; }
-  .nav-tab:last-child { border-radius: 0 4px 0 0; }
-  .nav-tab:hover { color: var(--text-secondary); background: var(--bg-raised); }
+  .nav-tab:hover { color: var(--text-secondary); background: rgba(0,0,0,0.04); }
   .nav-tab.active {
-    color: var(--gold-light);
-    background: var(--bg-card);
-    border-color: var(--border-bright);
-    border-bottom: 1px solid var(--bg-card);
-    text-shadow: 0 0 10px rgba(201,146,42,0.4);
+    background: var(--bg-raised);
+    color: var(--gold);
+    box-shadow: var(--shadow-sm);
+    font-weight: 600;
   }
 
-  /* ─── MAIN CONTENT ─── */
-  .main-wrapper {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px 60px;
-  }
-  .tab-border {
-    border: 1px solid var(--border-bright);
-    border-radius: 0 4px 4px 4px;
-    background: var(--bg-card);
-    padding: 28px;
-    margin-top: 0;
-    box-shadow: var(--shadow-deep);
-  }
+  /* ─── MAIN ─── */
+  .main-wrapper { max-width: 1280px; margin: 0 auto; padding: 28px 24px 60px; }
+
   .tab-pane { display: none; }
   .tab-pane.active { display: block; }
 
   /* ─── SECTION HEADERS ─── */
   .section-header {
     font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.35em;
+    font-size: 0.62rem;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--text-gold);
     border-bottom: 1px solid var(--border);
     padding-bottom: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
-  .section-header::before { content: '⬥'; font-size: 0.8rem; }
+  .section-header::before { content: '◆'; font-size: 0.55rem; opacity: 0.7; }
 
   /* ─── CARDS ─── */
   .card {
     background: var(--bg-raised);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: var(--radius);
     padding: 20px;
-    transition: border-color 0.2s;
+    box-shadow: var(--shadow-sm);
   }
-  .card:hover { border-color: var(--border-bright); }
 
   /* ─── BUTTONS ─── */
   .btn {
     font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     padding: 8px 20px;
     border: 1px solid;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
   }
   .btn-gold {
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    background: var(--gold);
     border-color: var(--gold);
-    color: var(--bg-deepest);
-    font-weight: 700;
+    color: #fff;
+    font-weight: 600;
   }
-  .btn-gold:hover { box-shadow: var(--glow-gold); filter: brightness(1.1); }
+  .btn-gold:hover { background: var(--gold-light); border-color: var(--gold-light); box-shadow: 0 2px 8px rgba(154,110,42,0.3); }
   .btn-ghost {
     background: transparent;
-    border-color: var(--border-bright);
+    border-color: var(--border-dark);
     color: var(--text-secondary);
   }
-  .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--gold-dim); }
   .btn-danger {
     background: transparent;
-    border-color: var(--crimson);
+    border-color: #d4b0b0;
     color: var(--crimson-light);
   }
-  .btn-danger:hover { background: var(--crimson-glow); }
-  .btn-sm { padding: 5px 12px; font-size: 0.6rem; }
-  .btn-icon { padding: 6px 10px; font-size: 0.8rem; font-family: inherit; }
+  .btn-danger:hover { background: var(--crimson-bg); border-color: var(--crimson); }
+  .btn-sm { padding: 5px 12px; font-size: 0.58rem; }
+  .btn-icon { padding: 5px 9px; font-size: 0.85rem; border-radius: 4px; }
+  .btn-success {
+    background: var(--jade);
+    border-color: var(--jade);
+    color: #fff;
+  }
+  .btn-success:hover { background: var(--jade-light); }
 
   /* ─── INPUTS ─── */
   input, select, textarea {
-    background: var(--bg-deepest);
+    background: var(--bg-raised);
     border: 1px solid var(--border);
-    border-radius: 3px;
+    border-radius: 4px;
     color: var(--text-primary);
-    font-family: 'Crimson Pro', serif;
-    font-size: 1rem;
-    padding: 7px 12px;
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    padding: 7px 11px;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.18s, box-shadow 0.18s;
     width: 100%;
   }
   input:focus, select:focus, textarea:focus {
     border-color: var(--gold-dim);
-    box-shadow: 0 0 0 2px rgba(201,146,42,0.1);
+    box-shadow: 0 0 0 3px rgba(196,144,58,0.12);
   }
   input[type="number"] { -moz-appearance: textfield; }
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   label {
     font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-muted);
     display: block;
@@ -226,1002 +212,823 @@
   }
   .field { margin-bottom: 14px; }
 
-  /* ─── GRID HELPERS ─── */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  /* ─── LAYOUT HELPERS ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
   .flex-row { display: flex; align-items: center; gap: 10px; }
   .flex-wrap { flex-wrap: wrap; }
   .gap-sm { gap: 8px; }
-  .mt { margin-top: 20px; }
-  .mt-sm { margin-top: 10px; }
+  .mt { margin-top: 24px; }
+  .mt-sm { margin-top: 12px; }
+  .ml-auto { margin-left: auto; }
 
-  /* ─── COMBAT TRACKER ─── */
-  #combat-round-bar {
-    display: flex;
+  /* ══════════════════════════════════════════════════════
+     COMBAT TRACKER
+  ══════════════════════════════════════════════════════ */
+
+  /* Round bar */
+  .round-bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
+    gap: 20px;
+    padding: 16px 24px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
     margin-bottom: 24px;
-    padding: 14px 20px;
-    background: var(--bg-deepest);
-    border: 1px solid var(--border-bright);
-    border-radius: 4px;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
   }
+  .round-stat { text-align: center; }
   .round-label {
     font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
+    font-size: 0.58rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--text-muted);
+    margin-bottom: 2px;
   }
-  .round-count {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 2rem;
-    color: var(--gold-light);
-    text-shadow: var(--glow-gold);
+  .round-value {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
   }
-  .round-block { text-align: center; }
+  .round-value.name { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+  .round-controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+  /* Active turn banner */
+  .active-banner {
+    background: linear-gradient(90deg, var(--jade-bg), transparent);
+    border: 1px solid var(--jade-light);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    color: var(--jade);
+    letter-spacing: 0.15em;
+    text-align: center;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .active-banner.visible { display: block; }
 
   /* Combatant list */
-  #combatant-list { display: flex; flex-direction: column; gap: 8px; }
+  .combatant-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
 
-  .combatant-row {
+  .list-header {
     display: grid;
-    grid-template-columns: 36px 80px 1fr 100px 100px 120px 80px auto;
+    grid-template-columns: 48px 72px 1fr 120px 72px 180px 96px;
     gap: 10px;
-    align-items: center;
-    padding: 12px 16px;
-    background: var(--bg-raised);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    border-left: 3px solid transparent;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .combatant-row:hover { border-color: var(--border-bright); border-left-color: var(--border-bright); }
-  .combatant-row.active-turn {
-    border-left-color: var(--gold);
-    background: var(--bg-hover);
-    box-shadow: inset 0 0 20px rgba(201,146,42,0.05);
-  }
-  .combatant-row.player { border-left-color: var(--jade); }
-  .combatant-row.player.active-turn { border-left-color: var(--jade-light); box-shadow: inset 0 0 20px rgba(26,107,74,0.08); }
-  .combatant-row.enemy { border-left-color: var(--crimson); }
-  .combatant-row.enemy.active-turn { border-left-color: var(--crimson-light); box-shadow: inset 0 0 20px rgba(139,26,26,0.08); }
-  .combatant-row.dead { opacity: 0.4; }
-
-  .init-badge {
+    padding: 6px 14px;
     font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--gold-light);
-    text-align: center;
-  }
-  .type-badge {
-    font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 2px;
-    text-align: center;
-  }
-  .type-badge.player { background: rgba(26,107,74,0.2); color: var(--jade-light); border: 1px solid var(--jade); }
-  .type-badge.enemy { background: rgba(139,26,26,0.2); color: var(--crimson-light); border: 1px solid var(--crimson); }
-  .type-badge.neutral { background: rgba(201,146,42,0.15); color: var(--gold); border: 1px solid var(--gold-dim); }
-
-  .combatant-name {
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .combatant-name small {
-    display: block;
-    font-family: 'Crimson Pro', serif;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-style: italic;
-    margin-top: 1px;
-  }
-
-  .hp-display {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .hp-numbers {
-    font-family: 'Crimson Pro', serif;
-    font-size: 1rem;
-    color: var(--text-primary);
-    text-align: center;
-  }
-  .hp-bar-bg {
-    height: 4px;
-    background: var(--bg-deepest);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .hp-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--jade), var(--jade-light));
-    border-radius: 2px;
-    transition: width 0.3s;
-  }
-  .hp-bar-fill.low { background: linear-gradient(90deg, #7a2000, var(--crimson-light)); }
-  .hp-bar-fill.mid { background: linear-gradient(90deg, #7a5a00, #c9922a); }
-
-  .ac-display {
-    text-align: center;
-  }
-  .ac-value {
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-  }
-  .ac-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.2em; }
-
-  .conditions-display {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-  }
-  .condition-tag {
-    font-size: 0.55rem;
-    padding: 1px 5px;
-    border-radius: 2px;
-    background: rgba(201,146,42,0.15);
-    border: 1px solid var(--gold-dim);
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-  }
-  .condition-tag:hover { background: var(--crimson-glow); border-color: var(--crimson); color: var(--crimson-light); }
-
-  .row-actions { display: flex; gap: 4px; }
-
-  /* Add combatant form */
-  #add-combatant-form {
-    background: var(--bg-deepest);
-    border: 1px dashed var(--border-bright);
-    border-radius: 4px;
-    padding: 20px;
-    margin-top: 16px;
-  }
-
-  .combatant-list-header {
-    display: grid;
-    grid-template-columns: 36px 80px 1fr 100px 100px 120px 80px auto;
-    gap: 10px;
-    padding: 6px 16px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
+    font-size: 0.54rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
-  /* HP edit inline */
-  .hp-edit-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 0.7rem;
-    padding: 0 3px;
-    transition: color 0.2s;
-  }
-  .hp-edit-btn:hover { color: var(--gold); }
-
-  /* ─── CONDITIONS LIST ─── */
-  .conditions-picker {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .cond-toggle {
-    font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
-    letter-spacing: 0.1em;
-    padding: 4px 10px;
-    border-radius: 2px;
+  .combatant-row {
+    display: grid;
+    grid-template-columns: 48px 72px 1fr 120px 72px 180px 96px;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 14px;
+    background: var(--bg-raised);
     border: 1px solid var(--border);
-    background: var(--bg-deepest);
+    border-radius: var(--radius);
+    border-left: 4px solid transparent;
+    transition: all 0.18s;
+    box-shadow: var(--shadow-sm);
+    cursor: default;
+  }
+  .combatant-row:hover { border-color: var(--border-dark); box-shadow: var(--shadow); }
+  .combatant-row.active-turn {
+    border-left-color: var(--jade);
+    background: linear-gradient(90deg, rgba(30,110,72,0.04), var(--bg-raised));
+    box-shadow: var(--shadow);
+  }
+  .combatant-row.type-player { border-left-color: var(--sky); }
+  .combatant-row.type-player.active-turn { border-left-color: var(--sky); background: linear-gradient(90deg, var(--sky-bg), var(--bg-raised)); }
+  .combatant-row.type-enemy { border-left-color: var(--crimson); }
+  .combatant-row.type-enemy.active-turn { border-left-color: var(--crimson); background: linear-gradient(90deg, var(--crimson-bg), var(--bg-raised)); }
+  .combatant-row.dead { opacity: 0.45; }
+
+  .init-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-align: center;
+  }
+
+  .type-pill {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .type-pill.player { background: var(--sky-bg); color: var(--sky); border: 1px solid rgba(42,90,139,0.25); }
+  .type-pill.enemy { background: var(--crimson-bg); color: var(--crimson); border: 1px solid rgba(139,32,32,0.25); }
+  .type-pill.neutral { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(196,144,58,0.3); }
+
+  .combatant-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .combatant-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* HP cell */
+  .hp-cell { display: flex; flex-direction: column; gap: 4px; }
+  .hp-row { display: flex; align-items: center; gap: 6px; }
+  .hp-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    min-width: 58px;
+  }
+  .hp-text:hover { color: var(--gold); }
+  .hp-bar-bg { height: 5px; background: var(--bg-warm); border-radius: 3px; overflow: hidden; flex: 1; }
+  .hp-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .hp-fill-full { background: linear-gradient(90deg, var(--jade), var(--jade-light)); }
+  .hp-fill-mid { background: linear-gradient(90deg, #b07020, #e09030); }
+  .hp-fill-low { background: linear-gradient(90deg, var(--crimson), var(--crimson-light)); }
+
+  /* AC cell */
+  .ac-cell { text-align: center; }
+  .ac-val {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .ac-lbl { font-size: 0.5rem; font-family: 'Cinzel', serif; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; }
+
+  /* Conditions */
+  .conditions-cell { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+  .cond-tag {
+    font-size: 0.52rem;
+    font-family: 'Cinzel', serif;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #fff5e0;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .cond-tag:hover { background: var(--crimson-bg); border-color: var(--crimson-light); color: var(--crimson); }
+  .cond-add {
+    font-size: 0.52rem;
+    font-family: 'Cinzel', serif;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: transparent;
+    border: 1px dashed var(--border-dark);
     color: var(--text-muted);
     cursor: pointer;
     transition: all 0.15s;
   }
-  .cond-toggle.on { background: rgba(201,146,42,0.15); border-color: var(--gold-dim); color: var(--gold); }
-  .cond-toggle:hover { border-color: var(--border-bright); color: var(--text-secondary); }
+  .cond-add:hover { border-color: var(--gold-dim); color: var(--gold); }
 
-  /* ─── TRAITS / NOTES ─── */
+  /* Row actions */
+  .row-actions { display: flex; gap: 4px; align-items: center; justify-content: flex-end; }
+
+  /* ─── ADD FORM ─── */
+  .add-form {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ─── NOTES ─── */
+  .notes-area {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: 'Lora', serif;
+    font-size: 0.92rem;
+    padding: 10px 13px;
+    resize: vertical;
+    min-height: 90px;
+    width: 100%;
+    line-height: 1.6;
+  }
+  .notes-area:focus { border-color: var(--gold-dim); outline: none; box-shadow: 0 0 0 3px rgba(196,144,58,0.1); }
+
+  /* ══════════════════════════════════════════════════════
+     CHARACTER SHEETS
+  ══════════════════════════════════════════════════════ */
+  .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
+
+  .char-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.18s, border-color 0.18s;
+  }
+  .char-card:hover { box-shadow: var(--shadow); border-color: var(--border-dark); }
+
+  .char-header {
+    background: linear-gradient(135deg, var(--gold-bg), rgba(196,144,58,0.04));
+    border-bottom: 1px solid var(--border);
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .char-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+  .char-meta { font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-top: 3px; }
+  .char-level-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    background: var(--gold);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .char-body { padding: 16px 18px; }
+
+  /* Core stats row */
+  .core-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .core-stat-box {
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 9px 6px;
+    text-align: center;
+  }
+  .core-stat-label { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; }
+  .core-stat-val { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-top: 2px; }
+  .core-stat-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+  /* Ability scores */
+  .ability-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .ability-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 7px 4px;
+    text-align: center;
+  }
+  .ability-box label { font-size: 0.5rem; letter-spacing: 0.1em; color: var(--text-muted); }
+  .ability-score { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+  .ability-mod { font-size: 0.7rem; color: var(--gold); font-weight: 600; }
+
+  /* Info chips */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .chip {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .chip-jade { background: var(--jade-bg); color: var(--jade); border-color: rgba(30,110,72,0.3); }
+  .chip-sky { background: var(--sky-bg); color: var(--sky); border-color: rgba(42,90,139,0.3); }
+  .chip-gold { background: var(--gold-bg); color: var(--gold); border-color: rgba(196,144,58,0.3); }
+
+  /* Features */
+  .feature-list { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+  .feature-item {
+    display: flex;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--bg-warm);
+    border-radius: 4px;
+    border-left: 3px solid var(--gold-dim);
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+  }
+  .feature-item-name { font-family: 'Cinzel', serif; font-size: 0.62rem; color: var(--gold); margin-right: 4px; white-space: nowrap; }
+
+  /* HP bar on card */
+  .card-hp-bar { margin-bottom: 12px; }
+  .card-hp-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .card-hp-val { font-size: 0.9rem; color: var(--text-primary); font-weight: 600; }
+  .card-hp-bg { height: 6px; background: var(--bg-warm); border-radius: 3px; overflow: hidden; }
+  .card-hp-fill { height: 100%; background: linear-gradient(90deg, var(--jade), var(--jade-light)); border-radius: 3px; }
+
+  /* ══════════════════════════════════════════════════════
+     MODALS
+  ══════════════════════════════════════════════════════ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20,14,6,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    padding: 20px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 28px;
+    max-width: 580px;
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(10px) scale(0.99);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-overlay.modal-lg .modal { max-width: 700px; }
+  .modal-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+  /* Conditions picker */
+  .cond-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cond-toggle {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-warm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cond-toggle.on { background: #fff5e0; border-color: var(--gold-dim); color: var(--gold); font-weight: 600; }
+  .cond-toggle:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+  /* HP modal quick buttons */
+  .hp-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .hp-quick-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    padding: 6px 13px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-warm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .hp-quick-btn.dmg { border-color: #d4b0b0; color: var(--crimson-light); }
+  .hp-quick-btn.dmg:hover { background: var(--crimson-bg); border-color: var(--crimson); }
+  .hp-quick-btn.heal { border-color: rgba(30,110,72,0.3); color: var(--jade); }
+  .hp-quick-btn.heal:hover { background: var(--jade-bg); border-color: var(--jade); }
+
+  /* Traits */
   .trait-list { display: flex; flex-direction: column; gap: 6px; }
   .trait-item {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 10px 14px;
-    background: var(--bg-deepest);
+    padding: 10px 13px;
+    background: var(--bg-warm);
     border: 1px solid var(--border);
-    border-radius: 3px;
-  }
-  .trait-bullet { color: var(--gold-dim); margin-top: 3px; flex-shrink: 0; }
-  .trait-name { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold); }
-  .trait-desc { font-size: 0.9rem; color: var(--text-secondary); margin-top: 2px; font-style: italic; }
-  .trait-remove { margin-left: auto; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; transition: color 0.2s; flex-shrink: 0; }
-  .trait-remove:hover { color: var(--crimson-light); }
-
-  /* ─── CHARACTER SHEET ─── */
-  .char-sheet-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-bottom: 20px; }
-  .char-card {
-    background: var(--bg-raised);
-    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold-dim);
     border-radius: 4px;
-    overflow: hidden;
-    transition: border-color 0.2s;
   }
-  .char-card:hover { border-color: var(--border-bright); }
-  .char-card-header {
-    padding: 14px 18px;
-    background: var(--bg-deepest);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .char-card-name { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--gold-light); }
-  .char-card-meta { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
-  .char-card-body { padding: 16px 18px; }
+  .trait-name { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--gold); }
+  .trait-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; font-style: italic; }
+  .trait-remove { margin-left: auto; color: var(--text-muted); cursor: pointer; font-size: 0.7rem; flex-shrink: 0; transition: color 0.15s; }
+  .trait-remove:hover { color: var(--crimson); }
 
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  .stat-box {
-    background: var(--bg-deepest);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 8px 4px;
-    text-align: center;
-  }
-  .stat-box label { font-size: 0.5rem; letter-spacing: 0.1em; margin-bottom: 4px; }
-  .stat-score { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--text-primary); }
-  .stat-mod { font-size: 0.7rem; color: var(--gold); }
-
-  .save-profs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-  .save-chip {
-    font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
-    padding: 3px 8px;
-    border-radius: 2px;
-    border: 1px solid var(--jade);
-    background: rgba(26,107,74,0.15);
-    color: var(--jade-light);
-  }
-
-  .feature-list-sm { display: flex; flex-direction: column; gap: 4px; }
-  .feature-item-sm {
-    font-size: 0.85rem;
-    padding: 5px 10px;
-    background: var(--bg-deepest);
-    border-left: 2px solid var(--gold-dim);
-    color: var(--text-secondary);
-  }
-  .feature-item-sm span { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--gold); margin-right: 6px; }
-
-  /* ─── DICE ROLLER ─── */
-  .dice-arena {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-  @media (max-width: 700px) { .dice-arena { grid-template-columns: 1fr; } }
-
-  .dice-panel {}
-  .dice-buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .dice-btn {
-    aspect-ratio: 1;
-    background: var(--bg-deepest);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .dice-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, var(--gold-dim) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .dice-btn:hover::before { opacity: 0.1; }
-  .dice-btn:hover { border-color: var(--gold-dim); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-  .dice-btn:active { transform: translateY(0); }
-  .dice-btn.selected { border-color: var(--gold); box-shadow: var(--glow-gold); }
-  .dice-icon { font-size: 2rem; line-height: 1; }
-  .dice-label { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--gold); margin-top: 4px; }
-
-  .dice-controls {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  .dice-controls .field { margin-bottom: 0; flex: 1; min-width: 80px; }
-
-  .dice-expr-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    margin-bottom: 20px;
-  }
-  .dice-expr-row .field { flex: 1; margin-bottom: 0; }
-
-  .roll-result {
-    background: var(--bg-deepest);
-    border: 1px solid var(--border-bright);
-    border-radius: 4px;
-    padding: 24px;
-    text-align: center;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .roll-result::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center bottom, rgba(201,146,42,0.05), transparent 70%);
-    pointer-events: none;
-  }
-  .roll-total {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 4rem;
-    color: var(--gold-light);
-    text-shadow: 0 0 30px rgba(201,146,42,0.6);
-    line-height: 1;
-    transition: all 0.1s;
-  }
-  .roll-total.crit { color: #ffd700; text-shadow: 0 0 40px rgba(255,215,0,0.8); }
-  .roll-total.fumble { color: var(--crimson-light); text-shadow: var(--glow-crimson); }
-  .roll-detail {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-top: 8px;
-    font-style: italic;
-  }
-  .roll-breakdown {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 10px;
-  }
-  .die-result-chip {
-    font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
-    padding: 3px 10px;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    background: var(--bg-raised);
-  }
-  .die-result-chip.max { border-color: var(--gold); color: var(--gold-light); background: rgba(201,146,42,0.1); }
-  .die-result-chip.min { border-color: var(--crimson); color: var(--crimson-light); background: rgba(139,26,26,0.1); }
-
-  .roll-history {
-    margin-top: 16px;
-  }
-  .roll-log {
-    max-height: 240px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .roll-log::-webkit-scrollbar { width: 4px; }
-  .roll-log::-webkit-scrollbar-track { background: var(--bg-deepest); }
-  .roll-log::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
-
-  .log-entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 12px;
-    background: var(--bg-deepest);
-    border-radius: 3px;
-    font-size: 0.85rem;
-  }
-  .log-expr { color: var(--text-muted); font-style: italic; }
-  .log-total { font-family: 'Cinzel', serif; color: var(--gold); }
-
-  /* ─── MODALS ─── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    backdrop-filter: blur(2px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--bg-card);
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 28px;
-    max-width: 560px;
-    width: calc(100% - 40px);
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: var(--shadow-deep), var(--glow-gold);
-    transform: translateY(12px);
-    transition: transform 0.2s;
-  }
-  .modal-overlay.open .modal { transform: translateY(0); }
-  .modal-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    color: var(--gold-light);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-
-  /* ─── ANIM ─── */
-  @keyframes rollAnim {
-    0% { transform: scale(1.4) rotate(-5deg); opacity: 0; }
-    60% { transform: scale(0.95) rotate(2deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-  .roll-total.animate { animation: rollAnim 0.35s ease-out; }
-
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-6px); }
-    40% { transform: translateX(6px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(4px); }
-  }
-  .dice-btn.rolling { animation: shake 0.35s ease; }
-
-  /* ─── QUICK HP MODAL ─── */
-  .hp-delta-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-  .hp-delta-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    padding: 6px 14px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    background: var(--bg-deepest);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .hp-delta-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    .combatant-row { grid-template-columns: 32px 70px 1fr 90px 90px 100px 60px auto; gap: 6px; }
-    .combatant-list-header { grid-template-columns: 32px 70px 1fr 90px 90px 100px 60px auto; gap: 6px; }
-    .grid-4 { grid-template-columns: 1fr 1fr; }
-    .stat-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 650px) {
-    .combatant-row { grid-template-columns: 1fr; }
-    .combatant-list-header { display: none; }
-    .tab-border { padding: 16px; }
-    .dice-buttons { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  /* ─── NOTES AREA ─── */
-  .notes-area {
-    background: var(--bg-deepest);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    color: var(--text-primary);
-    font-family: 'Crimson Pro', serif;
-    font-size: 1rem;
-    padding: 12px 14px;
-    resize: vertical;
-    min-height: 100px;
-    width: 100%;
-  }
-  .notes-area:focus { border-color: var(--gold-dim); outline: none; }
-
-  /* ─── TURN TRACKER ─── */
-  .turn-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .next-turn-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    padding: 10px 28px;
-    background: linear-gradient(135deg, #4a1a00, var(--crimson));
-    border: 1px solid var(--crimson-light);
-    color: var(--text-primary);
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .next-turn-btn:hover { box-shadow: var(--glow-crimson); filter: brightness(1.1); }
-
+  /* ─── EMPTY STATES ─── */
   .empty-state {
     text-align: center;
-    padding: 40px;
+    padding: 36px;
     color: var(--text-muted);
     font-style: italic;
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
-  .empty-state .icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
+  .empty-state .icon { font-size: 2rem; opacity: 0.4; margin-bottom: 10px; }
 
-  /* Notification toast */
+  /* ─── TOAST ─── */
   #toast {
     position: fixed;
     bottom: 24px;
     right: 24px;
     background: var(--bg-raised);
     border: 1px solid var(--gold-dim);
-    border-radius: 4px;
-    padding: 12px 20px;
+    border-radius: var(--radius);
+    padding: 11px 20px;
     font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
     color: var(--gold);
     z-index: 999;
+    box-shadow: var(--shadow);
     transform: translateY(80px);
     transition: transform 0.3s;
     pointer-events: none;
   }
   #toast.show { transform: translateY(0); }
 
-  select option { background: var(--bg-card); }
+  /* ─── SCROLLBARS ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-warm); }
+  ::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
 
-  .inline-edit { display: none; }
-  .inline-edit.visible { display: flex; gap: 4px; align-items: center; }
+  select option { background: var(--bg-raised); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .combatant-row, .list-header { grid-template-columns: 44px 66px 1fr 110px 64px 1fr 88px; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .ability-row { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .combatant-row { grid-template-columns: 1fr; }
+    .list-header { display: none; }
+    .round-bar { grid-template-columns: 1fr; text-align: center; }
+    .site-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ─── INITIATIVE ROLL ANIM ─── */
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.04); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .pop { animation: popIn 0.25s ease-out; }
+
+  /* ─── DIVIDER ─── */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="site-header">
-  <div class="site-title">
-    <span class="ornament">✦</span> Veilara <span class="ornament">✦</span>
+  <div class="header-brand">
+    <div class="site-title"><span class="ornament">✦</span> Veilara</div>
+    <div class="site-subtitle">Combat Tracker · 5e Homebrew</div>
   </div>
-  <div class="site-subtitle">Homebrew Combat Tracker &nbsp;·&nbsp; 5th Edition</div>
-</header>
-
-<div class="main-wrapper">
-  <!-- NAV TABS -->
   <nav class="nav-tabs">
     <button class="nav-tab active" data-tab="combat">⚔ Combat</button>
     <button class="nav-tab" data-tab="characters">📜 Characters</button>
-    <button class="nav-tab" data-tab="dice">🎲 Dice</button>
   </nav>
+</header>
 
-  <div class="tab-border">
+<div class="main-wrapper">
 
-    <!-- ═══════════════════════════════════════════════════════ COMBAT TAB -->
-    <div class="tab-pane active" id="tab-combat">
+  <!-- ══════════════════════════════ COMBAT TAB -->
+  <div class="tab-pane active" id="tab-combat">
 
-      <!-- Round bar -->
-      <div id="combat-round-bar">
-        <div class="round-block">
-          <div class="round-label">Round</div>
-          <div class="round-count" id="round-number">1</div>
+    <!-- Round bar -->
+    <div class="round-bar">
+      <div class="round-stat">
+        <div class="round-label">Round</div>
+        <div class="round-value" id="round-number">1</div>
+      </div>
+      <div class="round-controls">
+        <button class="btn btn-gold" onclick="nextTurn()">▶ Next Turn</button>
+        <button class="btn btn-ghost btn-sm" onclick="sortByInit()">↕ Sort Initiative</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetCombat()">↺ Reset</button>
+      </div>
+      <div class="round-stat" style="text-align:right;">
+        <div class="round-label">Active</div>
+        <div class="round-value name" id="active-name">—</div>
+      </div>
+    </div>
+
+    <!-- Active banner -->
+    <div class="active-banner" id="active-banner"></div>
+
+    <!-- List header -->
+    <div class="list-header">
+      <div>Init</div><div>Type</div><div>Name / Notes</div>
+      <div>HP</div><div>AC</div><div>Conditions</div><div style="text-align:right;">Actions</div>
+    </div>
+
+    <!-- Combatant list -->
+    <div class="combatant-list" id="combatant-list">
+      <div class="empty-state"><div class="icon">⚔</div>No combatants yet — add some below!</div>
+    </div>
+
+    <!-- Add form -->
+    <div class="add-form">
+      <div class="section-header" style="margin-bottom:16px;">Add Combatant</div>
+      <div class="grid-4" style="margin-bottom:0;">
+        <div class="field">
+          <label>Name</label>
+          <input id="f-name" type="text" placeholder="Goblin Shaman">
         </div>
-        <div class="turn-controls">
-          <button class="next-turn-btn" onclick="nextTurn()">Next Turn ▶</button>
-          <button class="btn btn-ghost btn-sm" onclick="resetCombat()">↺ Reset</button>
-          <button class="btn btn-ghost btn-sm" onclick="sortByInit()">↕ Sort by Initiative</button>
+        <div class="field">
+          <label>Type</label>
+          <select id="f-type">
+            <option value="enemy">Enemy</option>
+            <option value="player">Player</option>
+            <option value="neutral">Neutral / NPC</option>
+          </select>
         </div>
-        <div class="round-block">
-          <div class="round-label">Turn</div>
-          <div class="round-count" id="turn-number">—</div>
+        <div class="field">
+          <label>Initiative</label>
+          <div class="flex-row" style="gap:6px;">
+            <input id="f-init" type="number" placeholder="14" style="flex:1;">
+            <button class="btn btn-ghost btn-sm" onclick="rollInitiative()" title="Roll d20" style="white-space:nowrap; padding:7px 10px;">🎲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Linked Character Sheet</label>
+          <select id="f-linked">
+            <option value="">— None —</option>
+          </select>
         </div>
       </div>
-
-      <!-- List header -->
-      <div class="combatant-list-header">
-        <div>Init</div><div>Type</div><div>Name</div>
-        <div>HP</div><div>AC</div><div>Conditions</div><div>Actions</div><div></div>
-      </div>
-
-      <!-- Combatant list -->
-      <div id="combatant-list">
-        <div class="empty-state">
-          <div class="icon">⚔</div>
-          No combatants yet. Add some below!
+      <div style="display:grid; grid-template-columns: repeat(4, 1fr) 2fr; gap:14px; margin-bottom:14px;">
+        <div class="field">
+          <label>Max HP</label>
+          <input id="f-hp" type="number" placeholder="30">
+        </div>
+        <div class="field">
+          <label>AC</label>
+          <input id="f-ac" type="number" placeholder="14">
+        </div>
+        <div class="field">
+          <label>Speed</label>
+          <input id="f-speed" type="number" placeholder="30">
+        </div>
+        <div class="field">
+          <label>Passive Perc.</label>
+          <input id="f-pp" type="number" placeholder="12">
+        </div>
+        <div class="field">
+          <label>Traits / Abilities <span style="font-size:0.7em;text-transform:none;letter-spacing:0;">(Name: Desc, comma-separated)</span></label>
+          <input id="f-traits" type="text" placeholder="Pack Tactics: Adv. when ally is adjacent, Nimble Escape: Disengage as bonus">
         </div>
       </div>
+      <div class="flex-row">
+        <button class="btn btn-gold" onclick="addCombatant()">+ Add to Combat</button>
+        <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
 
-      <!-- Add form -->
-      <div id="add-combatant-form" class="mt">
-        <div class="section-header">Add Combatant</div>
-        <div class="grid-4" style="margin-bottom:12px;">
-          <div class="field">
-            <label>Name</label>
-            <input id="f-name" type="text" placeholder="Goblin Shaman">
+    <!-- Battle notes -->
+    <div class="mt">
+      <div class="section-header">Battle Notes</div>
+      <textarea class="notes-area" id="combat-notes" placeholder="Scene description, environmental hazards, ongoing spells, loot, DM reminders..."></textarea>
+    </div>
+
+    <!-- Conditions modal -->
+    <div class="modal-overlay" id="cond-modal">
+      <div class="modal">
+        <div class="modal-title">🩸 Conditions — <span id="cond-modal-name"></span></div>
+        <div class="cond-picker" id="cond-picker"></div>
+        <div class="modal-actions">
+          <button class="btn btn-gold" onclick="closeModal('cond-modal')">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HP modal -->
+    <div class="modal-overlay" id="hp-modal">
+      <div class="modal">
+        <div class="modal-title">❤ Adjust HP — <span id="hp-modal-name"></span></div>
+        <div class="flex-row" style="align-items:flex-end; gap:14px; margin-bottom:16px;">
+          <div class="field" style="flex:1; margin-bottom:0;">
+            <label>Current HP</label>
+            <input id="hpm-cur" type="number">
           </div>
-          <div class="field">
-            <label>Type</label>
-            <select id="f-type">
-              <option value="enemy">Enemy</option>
-              <option value="player">Player</option>
-              <option value="neutral">Neutral / NPC</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Initiative</label>
-            <input id="f-init" type="number" placeholder="14">
-          </div>
-          <div class="field">
+          <span style="color:var(--text-muted); font-size:1.3rem; padding-bottom:7px; flex-shrink:0;">/</span>
+          <div class="field" style="flex:1; margin-bottom:0;">
             <label>Max HP</label>
-            <input id="f-hp" type="number" placeholder="30">
-          </div>
-        </div>
-        <div class="grid-4" style="margin-bottom:16px;">
-          <div class="field">
-            <label>AC</label>
-            <input id="f-ac" type="number" placeholder="14">
-          </div>
-          <div class="field">
-            <label>Speed</label>
-            <input id="f-speed" type="number" placeholder="30">
-          </div>
-          <div class="field">
-            <label>Roll Initiative?</label>
-            <div style="margin-top:8px;">
-              <button class="btn btn-ghost btn-sm" onclick="rollInitiative()">🎲 Roll d20</button>
-            </div>
-          </div>
-          <div class="field">
-            <label>Linked Sheet</label>
-            <select id="f-linked">
-              <option value="">— None —</option>
-            </select>
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:16px;">
-          <label>Traits / Abilities (comma-separated: Name: Description)</label>
-          <input id="f-traits" type="text" placeholder="Pack Tactics: Advantage when ally adjacent, Nimble Escape: Disengage as bonus action">
-        </div>
-        <div class="flex-row">
-          <button class="btn btn-gold" onclick="addCombatant()">+ Add to Combat</button>
-          <button class="btn btn-ghost" onclick="clearCombatantForm()">Clear</button>
-        </div>
-      </div>
-
-      <!-- Conditions modal -->
-      <div class="modal-overlay" id="cond-modal">
-        <div class="modal">
-          <div class="modal-title">Conditions — <span id="cond-modal-name"></span></div>
-          <div class="conditions-picker" id="cond-modal-picker"></div>
-          <div class="modal-actions">
-            <button class="btn btn-gold" onclick="closeCondModal()">Done</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Traits modal -->
-      <div class="modal-overlay" id="traits-modal">
-        <div class="modal">
-          <div class="modal-title">Traits — <span id="traits-modal-name"></span></div>
-          <div class="trait-list" id="traits-modal-list"></div>
-          <div class="section-header mt">Add Trait</div>
-          <div class="field">
-            <label>Trait Name</label>
-            <input id="tm-trait-name" type="text" placeholder="Legendary Resistance">
-          </div>
-          <div class="field">
-            <label>Description</label>
-            <textarea id="tm-trait-desc" class="notes-area" placeholder="If fails a saving throw, can choose to succeed instead. (3/Day)" style="min-height:70px;"></textarea>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-ghost" onclick="closeTraitsModal()">Close</button>
-            <button class="btn btn-gold" onclick="addTraitFromModal()">+ Add Trait</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- HP edit modal -->
-      <div class="modal-overlay" id="hp-modal">
-        <div class="modal">
-          <div class="modal-title">Adjust HP — <span id="hp-modal-name"></span></div>
-          <div class="flex-row" style="margin-bottom:14px; align-items:flex-end; gap:12px;">
-            <div class="field" style="flex:1; margin-bottom:0;">
-              <label>Current HP</label>
-              <input id="hpm-current" type="number">
-            </div>
-            <span style="color:var(--text-muted); font-size:1.2rem; padding-bottom:6px;">/</span>
-            <div class="field" style="flex:1; margin-bottom:0;">
-              <label>Max HP</label>
-              <input id="hpm-max" type="number">
-            </div>
-          </div>
-          <label>Quick Adjust</label>
-          <div class="hp-delta-btns">
-            <button class="hp-delta-btn" onclick="quickHP(-1)">-1</button>
-            <button class="hp-delta-btn" onclick="quickHP(-5)">-5</button>
-            <button class="hp-delta-btn" onclick="quickHP(-10)">-10</button>
-            <button class="hp-delta-btn" onclick="quickHP(-20)">-20</button>
-            <button class="hp-delta-btn" onclick="quickHP(1)">+1</button>
-            <button class="hp-delta-btn" onclick="quickHP(5)">+5</button>
-            <button class="hp-delta-btn" onclick="quickHP(10)">+10</button>
-            <button class="hp-delta-btn" onclick="quickHP(null, true)">Full Heal</button>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-ghost" onclick="closeHPModal()">Cancel</button>
-            <button class="btn btn-gold" onclick="saveHP()">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Notes section -->
-      <div class="mt">
-        <div class="section-header">Battle Notes</div>
-        <textarea class="notes-area" id="combat-notes" placeholder="Scene description, environmental hazards, ongoing effects, loot..."></textarea>
-      </div>
-
-    </div><!-- /tab-combat -->
-
-
-    <!-- ═══════════════════════════════════════════════════ CHARACTERS TAB -->
-    <div class="tab-pane" id="tab-characters">
-
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-        <div class="section-header" style="margin-bottom:0;">Character Sheets</div>
-        <button class="btn btn-gold" onclick="openCharModal()">+ New Character</button>
-      </div>
-
-      <div class="char-sheet-list" id="char-sheet-list">
-        <div class="empty-state">
-          <div class="icon">📜</div>
-          No characters yet. Create one above!
-        </div>
-      </div>
-
-      <!-- Character modal -->
-      <div class="modal-overlay" id="char-modal" style="align-items:flex-start; padding: 20px 0;">
-        <div class="modal" style="max-width:640px; margin: auto;">
-          <div class="modal-title" id="char-modal-title">New Character</div>
-
-          <div class="grid-2" style="margin-bottom:14px;">
-            <div class="field"><label>Character Name</label><input id="cm-name" type="text" placeholder="Aldric Dawnmere"></div>
-            <div class="field"><label>Player Name</label><input id="cm-player" type="text" placeholder="Your name"></div>
-          </div>
-          <div class="grid-3" style="margin-bottom:14px;">
-            <div class="field"><label>Class</label><input id="cm-class" type="text" placeholder="Paladin"></div>
-            <div class="field"><label>Race</label><input id="cm-race" type="text" placeholder="Half-Elf"></div>
-            <div class="field"><label>Level</label><input id="cm-level" type="number" placeholder="5" min="1" max="20"></div>
-          </div>
-          <div class="grid-3" style="margin-bottom:14px;">
-            <div class="field"><label>Background</label><input id="cm-bg" type="text" placeholder="Noble"></div>
-            <div class="field"><label>Alignment</label><input id="cm-align" type="text" placeholder="Lawful Good"></div>
-            <div class="field"><label>XP</label><input id="cm-xp" type="number" placeholder="0"></div>
-          </div>
-
-          <div class="section-header mt">Ability Scores</div>
-          <div class="grid-4" style="margin-bottom:14px; grid-template-columns: repeat(6,1fr);">
-            <div class="field"><label>STR</label><input id="cm-str" type="number" min="1" max="30" placeholder="10"></div>
-            <div class="field"><label>DEX</label><input id="cm-dex" type="number" min="1" max="30" placeholder="10"></div>
-            <div class="field"><label>CON</label><input id="cm-con" type="number" min="1" max="30" placeholder="10"></div>
-            <div class="field"><label>INT</label><input id="cm-int" type="number" min="1" max="30" placeholder="10"></div>
-            <div class="field"><label>WIS</label><input id="cm-wis" type="number" min="1" max="30" placeholder="10"></div>
-            <div class="field"><label>CHA</label><input id="cm-cha" type="number" min="1" max="30" placeholder="10"></div>
-          </div>
-
-          <div class="grid-4" style="margin-bottom:14px;">
-            <div class="field"><label>Max HP</label><input id="cm-hp" type="number" placeholder="38"></div>
-            <div class="field"><label>AC</label><input id="cm-ac" type="number" placeholder="18"></div>
-            <div class="field"><label>Speed</label><input id="cm-speed" type="number" placeholder="30"></div>
-            <div class="field"><label>Initiative Bonus</label><input id="cm-initbonus" type="number" placeholder="+2"></div>
-          </div>
-
-          <div class="field" style="margin-bottom:14px;">
-            <label>Saving Throw Proficiencies (comma-separated)</label>
-            <input id="cm-saves" type="text" placeholder="WIS, CHA">
-          </div>
-          <div class="field" style="margin-bottom:14px;">
-            <label>Skill Proficiencies (comma-separated)</label>
-            <input id="cm-skills" type="text" placeholder="Persuasion, Insight, Athletics">
-          </div>
-          <div class="field" style="margin-bottom:14px;">
-            <label>Features & Traits (one per line: Name: Description)</label>
-            <textarea id="cm-features" class="notes-area" style="min-height:80px;" placeholder="Divine Smite: Expend spell slot to deal extra radiant damage&#10;Lay on Hands: Pool of 25 HP to heal as action"></textarea>
-          </div>
-          <div class="field" style="margin-bottom:14px;">
-            <label>Equipment & Weapons</label>
-            <textarea id="cm-equipment" class="notes-area" style="min-height:60px;" placeholder="Longsword (1d8+4), Shield, Holy Symbol, Chain Mail..."></textarea>
-          </div>
-          <div class="field" style="margin-bottom:14px;">
-            <label>Notes / Backstory</label>
-            <textarea id="cm-notes" class="notes-area" style="min-height:70px;"></textarea>
-          </div>
-
-          <div class="modal-actions">
-            <button class="btn btn-ghost" onclick="closeCharModal()">Cancel</button>
-            <button class="btn btn-gold" onclick="saveChar()">Save Character</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /tab-characters -->
-
-
-    <!-- ══════════════════════════════════════════════════════ DICE TAB -->
-    <div class="tab-pane" id="tab-dice">
-      <div class="dice-arena">
-
-        <!-- Left: dice picker -->
-        <div class="dice-panel">
-          <div class="section-header">Choose Dice</div>
-
-          <div class="dice-buttons">
-            <div class="dice-btn" data-die="4" onclick="selectDie(4, this)">
-              <span class="dice-icon">◇</span>
-              <span class="dice-label">d4</span>
-            </div>
-            <div class="dice-btn" data-die="6" onclick="selectDie(6, this)">
-              <span class="dice-icon">⬡</span>
-              <span class="dice-label">d6</span>
-            </div>
-            <div class="dice-btn" data-die="8" onclick="selectDie(8, this)">
-              <span class="dice-icon">◈</span>
-              <span class="dice-label">d8</span>
-            </div>
-            <div class="dice-btn" data-die="10" onclick="selectDie(10, this)">
-              <span class="dice-icon">⬟</span>
-              <span class="dice-label">d10</span>
-            </div>
-            <div class="dice-btn" data-die="12" onclick="selectDie(12, this)">
-              <span class="dice-icon">⬠</span>
-              <span class="dice-label">d12</span>
-            </div>
-            <div class="dice-btn" data-die="20" onclick="selectDie(20, this)">
-              <span class="dice-icon">🎲</span>
-              <span class="dice-label">d20</span>
-            </div>
-            <div class="dice-btn" data-die="100" onclick="selectDie(100, this)">
-              <span class="dice-icon">💯</span>
-              <span class="dice-label">d100</span>
-            </div>
-            <div class="dice-btn" data-die="custom" onclick="focusCustomDie(this)">
-              <span class="dice-icon" style="font-size:1.4rem;">✏</span>
-              <span class="dice-label">Custom</span>
-            </div>
-          </div>
-
-          <div class="dice-controls">
-            <div class="field">
-              <label>Count</label>
-              <input id="dice-count" type="number" value="1" min="1" max="99" style="width:100%;">
-            </div>
-            <div class="field">
-              <label>Sides (custom)</label>
-              <input id="dice-sides" type="number" placeholder="e.g. 3" style="width:100%;">
-            </div>
-            <div class="field">
-              <label>Modifier</label>
-              <input id="dice-mod" type="number" value="0" style="width:100%;">
-            </div>
-          </div>
-
-          <div class="flex-row" style="margin-bottom:20px; flex-wrap:wrap; gap:8px;">
-            <button class="btn btn-gold" onclick="rollDice()" style="flex:1;">🎲 Roll</button>
-            <button class="btn btn-ghost btn-sm" onclick="rollAdvantage()">Advantage</button>
-            <button class="btn btn-ghost btn-sm" onclick="rollDisadvantage()">Disadvantage</button>
-          </div>
-
-          <div class="section-header">Custom Expression</div>
-          <div class="dice-expr-row">
-            <div class="field">
-              <label>Type expression (e.g. 2d6+1d4+3)</label>
-              <input id="dice-expr" type="text" placeholder="2d6+1d8-2" onkeydown="if(event.key==='Enter') rollExpression()">
-            </div>
-            <button class="btn btn-gold" onclick="rollExpression()" style="white-space:nowrap; margin-bottom:0; align-self:flex-end;">Roll Expr</button>
-          </div>
-
-          <div class="section-header">Quick Rolls</div>
-          <div class="flex-row flex-wrap gap-sm">
-            <button class="btn btn-ghost btn-sm" onclick="quickRoll('1d20')">d20 Check</button>
-            <button class="btn btn-ghost btn-sm" onclick="quickRoll('1d20+0','Attack')">Attack</button>
-            <button class="btn btn-ghost btn-sm" onclick="quickRoll('1d8+3','Longsword')">Longsword</button>
-            <button class="btn btn-ghost btn-sm" onclick="quickRoll('2d6+3','Greatclub')">Greatclub</button>
-            <button class="btn btn-ghost btn-sm" onclick="quickRoll('1d6','Sneak Atk')">Sneak Atk</button>
-            <button class="btn btn-ghost btn-sm" onclick="quickRoll('4d6','Stats')">4d6 Drop Low</button>
+            <input id="hpm-max" type="number">
           </div>
         </div>
 
-        <!-- Right: result + history -->
+        <div style="margin-bottom:8px;">
+          <label>Quick Damage</label>
+          <div class="hp-quick">
+            <button class="hp-quick-btn dmg" onclick="hpDelta(-1)">−1</button>
+            <button class="hp-quick-btn dmg" onclick="hpDelta(-3)">−3</button>
+            <button class="hp-quick-btn dmg" onclick="hpDelta(-5)">−5</button>
+            <button class="hp-quick-btn dmg" onclick="hpDelta(-10)">−10</button>
+            <button class="hp-quick-btn dmg" onclick="hpDelta(-15)">−15</button>
+            <button class="hp-quick-btn dmg" onclick="hpDelta(-20)">−20</button>
+          </div>
+        </div>
         <div>
-          <div class="section-header">Result</div>
-          <div class="roll-result">
-            <div class="roll-total" id="roll-total">—</div>
-            <div class="roll-detail" id="roll-detail">Roll a die to begin</div>
-            <div class="roll-breakdown" id="roll-breakdown"></div>
-          </div>
-
-          <div class="roll-history mt">
-            <div class="section-header" style="margin-bottom:12px;">
-              History
-              <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="clearLog()">Clear</button>
-            </div>
-            <div class="roll-log" id="roll-log">
-              <div class="empty-state" style="padding:16px; font-size:0.85rem;">No rolls yet</div>
-            </div>
+          <label>Quick Heal</label>
+          <div class="hp-quick">
+            <button class="hp-quick-btn heal" onclick="hpDelta(1)">+1</button>
+            <button class="hp-quick-btn heal" onclick="hpDelta(5)">+5</button>
+            <button class="hp-quick-btn heal" onclick="hpDelta(10)">+10</button>
+            <button class="hp-quick-btn heal" onclick="hpDelta(20)">+20</button>
+            <button class="hp-quick-btn heal" onclick="hpFull()">Full Heal</button>
           </div>
         </div>
-
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal('hp-modal')">Cancel</button>
+          <button class="btn btn-gold" onclick="saveHP()">Save</button>
+        </div>
       </div>
-    </div><!-- /tab-dice -->
+    </div>
 
-  </div><!-- /tab-border -->
+    <!-- Traits modal -->
+    <div class="modal-overlay" id="traits-modal">
+      <div class="modal">
+        <div class="modal-title">⚡ Traits — <span id="traits-modal-name"></span></div>
+        <div class="trait-list" id="traits-modal-list"></div>
+        <div class="divider"></div>
+        <div class="grid-2" style="margin-bottom:10px;">
+          <div class="field"><label>Trait Name</label><input id="tm-name" type="text" placeholder="Legendary Resistance"></div>
+          <div class="field"><label>Description</label><input id="tm-desc" type="text" placeholder="3/day: choose to succeed a saving throw"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal('traits-modal')">Close</button>
+          <button class="btn btn-gold" onclick="addTraitModal()">+ Add Trait</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-combat -->
+
+
+  <!-- ══════════════════════════════ CHARACTERS TAB -->
+  <div class="tab-pane" id="tab-characters">
+    <div class="flex-row" style="margin-bottom:22px; flex-wrap:wrap; gap:12px;">
+      <div class="section-header" style="margin-bottom:0; flex:1;">Character Roster</div>
+      <button class="btn btn-gold" onclick="openCharModal()">+ New Character</button>
+    </div>
+
+    <div class="char-grid" id="char-grid">
+      <div class="empty-state"><div class="icon">📜</div>No characters yet. Create one above!</div>
+    </div>
+
+    <!-- Character modal -->
+    <div class="modal-overlay modal-lg" id="char-modal" style="align-items:flex-start; overflow-y:auto;">
+      <div class="modal" style="margin:20px auto; max-width:660px;">
+        <div class="modal-title" id="char-modal-title">New Character</div>
+
+        <div class="grid-2" style="margin-bottom:12px;">
+          <div class="field"><label>Character Name</label><input id="cm-name" type="text" placeholder="Aldric Dawnmere"></div>
+          <div class="field"><label>Player Name</label><input id="cm-player" type="text" placeholder="Your name"></div>
+        </div>
+        <div style="display:grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div class="field"><label>Class</label><input id="cm-class" type="text" placeholder="Paladin"></div>
+          <div class="field"><label>Race / Species</label><input id="cm-race" type="text" placeholder="Half-Elf"></div>
+          <div class="field"><label>Level</label><input id="cm-level" type="number" placeholder="5" min="1" max="20"></div>
+          <div class="field"><label>Prof. Bonus</label><input id="cm-prof" type="number" placeholder="+3"></div>
+        </div>
+        <div class="grid-3" style="margin-bottom:12px;">
+          <div class="field"><label>Background</label><input id="cm-bg" type="text" placeholder="Noble"></div>
+          <div class="field"><label>Alignment</label><input id="cm-align" type="text" placeholder="Lawful Good"></div>
+          <div class="field"><label>XP</label><input id="cm-xp" type="number" placeholder="0"></div>
+        </div>
+
+        <div class="section-header">Ability Scores</div>
+        <div style="display:grid; grid-template-columns: repeat(6,1fr); gap:10px; margin-bottom:14px;">
+          <div class="field"><label>STR</label><input id="cm-str" type="number" min="1" max="30" placeholder="10"></div>
+          <div class="field"><label>DEX</label><input id="cm-dex" type="number" min="1" max="30" placeholder="10"></div>
+          <div class="field"><label>CON</label><input id="cm-con" type="number" min="1" max="30" placeholder="10"></div>
+          <div class="field"><label>INT</label><input id="cm-int" type="number" min="1" max="30" placeholder="10"></div>
+          <div class="field"><label>WIS</label><input id="cm-wis" type="number" min="1" max="30" placeholder="10"></div>
+          <div class="field"><label>CHA</label><input id="cm-cha" type="number" min="1" max="30" placeholder="10"></div>
+        </div>
+
+        <div class="section-header">Combat Stats</div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:12px;">
+          <div class="field"><label>Max HP</label><input id="cm-hp" type="number" placeholder="38"></div>
+          <div class="field"><label>AC</label><input id="cm-ac" type="number" placeholder="18"></div>
+          <div class="field"><label>Speed</label><input id="cm-speed" type="number" placeholder="30"></div>
+          <div class="field"><label>Initiative Bonus</label><input id="cm-initbonus" type="number" placeholder="2"></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:12px;">
+          <div class="field"><label>Passive Perception</label><input id="cm-pp" type="number" placeholder="14"></div>
+          <div class="field"><label>Spell Save DC</label><input id="cm-spelldc" type="number" placeholder="15"></div>
+        </div>
+
+        <div class="section-header">Proficiencies</div>
+        <div class="grid-2" style="margin-bottom:12px;">
+          <div class="field"><label>Saving Throw Proficiencies</label><input id="cm-saves" type="text" placeholder="WIS, CHA"></div>
+          <div class="field"><label>Skill Proficiencies</label><input id="cm-skills" type="text" placeholder="Persuasion, Insight, Athletics"></div>
+        </div>
+
+        <div class="section-header">Features & Equipment</div>
+        <div class="field" style="margin-bottom:12px;">
+          <label>Features & Traits <span style="font-size:0.8em;text-transform:none;letter-spacing:0;">(one per line: Name: Description)</span></label>
+          <textarea id="cm-features" class="notes-area" style="min-height:80px;" placeholder="Divine Smite: Expend spell slot for extra radiant damage&#10;Lay on Hands: Pool of 25 HP to heal as action"></textarea>
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label>Equipment & Weapons</label>
+          <input id="cm-equip" type="text" placeholder="Longsword (1d8+4), Shield, Chain Mail, Holy Symbol">
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label>Notes / Backstory</label>
+          <textarea id="cm-notes" class="notes-area" style="min-height:64px;"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal('char-modal')">Cancel</button>
+          <button class="btn btn-gold" onclick="saveChar()">Save Character</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-characters -->
+
 </div><!-- /main-wrapper -->
 
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//   STATE
-// ═══════════════════════════════════════════════════════════════
-let state = {
+// ═══════════════════════════════════════════════════════
+//  STATE & PERSIST
+// ═══════════════════════════════════════════════════════
+let S = {
   combatants: [],
   characters: [],
-  currentTurn: -1,
-  round: 1,
-  rollLog: []
+  turn: -1,
+  round: 1
 };
 
-// Persist
-function save() { localStorage.setItem('veilara-tracker', JSON.stringify(state)); }
+function save() { try { localStorage.setItem('veilara2', JSON.stringify(S)); } catch(e){} }
 function load() {
-  const d = localStorage.getItem('veilara-tracker');
-  if (d) try { state = {...state, ...JSON.parse(d)}; } catch(e) {}
+  try { const d = localStorage.getItem('veilara2'); if (d) S = {...S, ...JSON.parse(d)}; } catch(e){}
 }
 load();
 
-// ═══════════════════════════════════════════════════════════════
-//   TABS
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════════
 document.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1231,608 +1038,482 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-//   TOAST
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2200);
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//   CONDITIONS
-// ═══════════════════════════════════════════════════════════════
-const CONDITIONS = ['Blinded','Charmed','Deafened','Exhausted','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious','Concentrating','Bloodied','Cursed'];
+// ═══════════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
 
-// ═══════════════════════════════════════════════════════════════
-//   COMBAT TRACKER
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  CONDITIONS
+// ═══════════════════════════════════════════════════════
+const CONDITIONS = [
+  'Blinded','Charmed','Deafened','Exhausted','Frightened',
+  'Grappled','Incapacitated','Invisible','Paralyzed','Petrified',
+  'Poisoned','Prone','Restrained','Stunned','Unconscious',
+  'Concentrating','Bloodied','Cursed','Burning','Silenced'
+];
+
+// ═══════════════════════════════════════════════════════
+//  COMBAT TRACKER
+// ═══════════════════════════════════════════════════════
 function addCombatant() {
   const name = document.getElementById('f-name').value.trim();
-  if (!name) { toast('Name is required'); return; }
+  if (!name) { toast('Name is required!'); return; }
+  const maxHP = parseInt(document.getElementById('f-hp').value) || 10;
   const c = {
     id: Date.now(),
     name,
     type: document.getElementById('f-type').value,
     initiative: parseInt(document.getElementById('f-init').value) || 0,
-    maxHP: parseInt(document.getElementById('f-hp').value) || 10,
-    currentHP: parseInt(document.getElementById('f-hp').value) || 10,
+    maxHP, currentHP: maxHP,
     ac: parseInt(document.getElementById('f-ac').value) || 10,
     speed: parseInt(document.getElementById('f-speed').value) || 30,
+    pp: parseInt(document.getElementById('f-pp').value) || 10,
     conditions: [],
     traits: parseTraits(document.getElementById('f-traits').value),
     linkedChar: document.getElementById('f-linked').value || null,
+    dead: false,
     notes: ''
   };
-  state.combatants.push(c);
+  S.combatants.push(c);
   save();
   renderCombatants();
-  clearCombatantForm();
+  clearForm();
   toast(`${name} added to combat`);
 }
 
 function parseTraits(str) {
   if (!str.trim()) return [];
   return str.split(',').map(t => {
-    const idx = t.indexOf(':');
-    if (idx === -1) return { name: t.trim(), desc: '' };
-    return { name: t.slice(0, idx).trim(), desc: t.slice(idx+1).trim() };
+    const i = t.indexOf(':');
+    return i === -1 ? { name: t.trim(), desc: '' } : { name: t.slice(0,i).trim(), desc: t.slice(i+1).trim() };
   }).filter(t => t.name);
 }
 
-function clearCombatantForm() {
-  ['f-name','f-init','f-hp','f-ac','f-speed','f-traits'].forEach(id => document.getElementById(id).value = '');
+function clearForm() {
+  ['f-name','f-init','f-hp','f-ac','f-speed','f-pp','f-traits'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-type').value = 'enemy';
   document.getElementById('f-linked').value = '';
 }
 
 function rollInitiative() {
   const roll = Math.floor(Math.random() * 20) + 1;
-  document.getElementById('f-init').value = roll;
-  toast(`Rolled ${roll} for initiative!`);
+  const el = document.getElementById('f-init');
+  el.value = roll;
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 300);
+  toast(`Initiative: ${roll}`);
 }
 
 function sortByInit() {
-  state.combatants.sort((a, b) => b.initiative - a.initiative);
-  state.currentTurn = state.combatants.length > 0 ? 0 : -1;
+  S.combatants.sort((a, b) => b.initiative - a.initiative);
+  if (S.combatants.length > 0 && S.turn === -1) S.turn = 0;
   save();
   renderCombatants();
+  updateRoundBar();
 }
 
 function nextTurn() {
-  if (state.combatants.length === 0) return;
-  state.currentTurn = (state.currentTurn + 1) % state.combatants.length;
-  if (state.currentTurn === 0) state.round++;
+  if (S.combatants.length === 0) return;
+  const living = S.combatants.filter(c => !c.dead);
+  if (living.length === 0) { toast('All combatants are dead!'); return; }
+  // advance through living combatants only
+  let next = S.turn === -1 ? 0 : S.turn + 1;
+  if (next >= S.combatants.length) { next = 0; S.round++; }
+  // skip dead
+  let tries = 0;
+  while (S.combatants[next]?.dead && tries < S.combatants.length) { next = (next + 1) % S.combatants.length; if (next === 0) S.round++; tries++; }
+  S.turn = next;
   save();
   renderCombatants();
-  document.getElementById('round-number').textContent = state.round;
-  const c = state.combatants[state.currentTurn];
-  document.getElementById('turn-number').textContent = c ? c.name.slice(0,8) : '—';
-  toast(`${c.name}'s turn`);
+  updateRoundBar();
+  const active = S.combatants[S.turn];
+  if (active) toast(`${active.name}'s turn!`);
+}
+
+function updateRoundBar() {
+  document.getElementById('round-number').textContent = S.round;
+  const active = S.combatants[S.turn];
+  const nameEl = document.getElementById('active-name');
+  const banner = document.getElementById('active-banner');
+  if (active) {
+    nameEl.textContent = active.name;
+    banner.textContent = `⚔ It's ${active.name}'s turn`;
+    banner.classList.add('visible');
+    if (active.type === 'enemy') banner.style.cssText = 'background:linear-gradient(90deg,var(--crimson-bg),transparent);border-color:var(--crimson-light);color:var(--crimson);display:block;';
+    else if (active.type === 'player') banner.style.cssText = 'background:linear-gradient(90deg,var(--sky-bg),transparent);border-color:rgba(42,90,139,0.4);color:var(--sky);display:block;';
+    else banner.style.cssText = 'background:linear-gradient(90deg,var(--gold-bg),transparent);border-color:var(--gold-dim);color:var(--gold);display:block;';
+  } else {
+    nameEl.textContent = '—';
+    banner.style.display = 'none';
+    banner.classList.remove('visible');
+  }
 }
 
 function resetCombat() {
-  if (!confirm('Reset combat? This will clear all combatants and reset rounds.')) return;
-  state.combatants = [];
-  state.currentTurn = -1;
-  state.round = 1;
+  if (!confirm('Reset combat? Combatants will be cleared.')) return;
+  S.combatants = []; S.turn = -1; S.round = 1;
   save();
   renderCombatants();
-  document.getElementById('round-number').textContent = '1';
-  document.getElementById('turn-number').textContent = '—';
+  updateRoundBar();
+  document.getElementById('active-banner').style.display = 'none';
 }
 
 function removeCombatant(id) {
-  state.combatants = state.combatants.filter(c => c.id !== id);
-  if (state.currentTurn >= state.combatants.length) state.currentTurn = 0;
+  S.combatants = S.combatants.filter(c => c.id !== id);
+  if (S.turn >= S.combatants.length) S.turn = Math.max(0, S.combatants.length - 1);
   save();
   renderCombatants();
 }
 
 function toggleDead(id) {
-  const c = state.combatants.find(x => x.id === id);
-  if (!c) return;
-  c.dead = !c.dead;
-  save();
-  renderCombatants();
+  const c = S.combatants.find(x => x.id === id);
+  if (c) { c.dead = !c.dead; save(); renderCombatants(); toast(c.dead ? `${c.name} has fallen.` : `${c.name} revived.`); }
+}
+
+function escH(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function renderCombatants() {
   const list = document.getElementById('combatant-list');
-  if (state.combatants.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">⚔</div>No combatants yet. Add some below!</div>';
+  if (S.combatants.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">⚔</div>No combatants — add some below!</div>';
     return;
   }
-  list.innerHTML = state.combatants.map((c, i) => {
-    const hpPct = Math.max(0, Math.min(100, (c.currentHP / c.maxHP) * 100));
-    const barClass = hpPct > 50 ? '' : hpPct > 25 ? 'mid' : 'low';
-    const isActive = i === state.currentTurn;
-    const rowClass = [c.type, isActive ? 'active-turn' : '', c.dead ? 'dead' : ''].filter(Boolean).join(' ');
-    const condTags = c.conditions.map(cd => `<span class="condition-tag" title="Click to remove" onclick="removeCondition(${c.id},'${cd}')">${cd}</span>`).join('');
-    return `
-    <div class="combatant-row ${rowClass}" id="row-${c.id}">
+  list.innerHTML = S.combatants.map((c, i) => {
+    const pct = Math.max(0, Math.min(100, (c.currentHP / c.maxHP) * 100));
+    const fillCls = pct > 50 ? 'hp-fill-full' : pct > 25 ? 'hp-fill-mid' : 'hp-fill-low';
+    const isActive = i === S.turn;
+    const rowCls = ['combatant-row', `type-${c.type}`, isActive ? 'active-turn' : '', c.dead ? 'dead' : ''].filter(Boolean).join(' ');
+    const condTags = c.conditions.map(cd => `<span class="cond-tag" title="Click to remove" onclick="removeCondition(${c.id},'${cd}')">${cd}</span>`).join('');
+    const linkedChar = c.linkedChar ? S.characters.find(x => x.id == c.linkedChar) : null;
+    const subInfo = [c.speed ? c.speed+'ft' : '', c.pp ? 'PP'+c.pp : '', linkedChar ? '📜 '+linkedChar.name : ''].filter(Boolean).join(' · ');
+    return `<div class="${rowCls}" id="row-${c.id}">
       <div class="init-badge">${c.initiative}</div>
-      <div><span class="type-badge ${c.type}">${c.type === 'neutral' ? 'NPC' : c.type}</span></div>
+      <div><span class="type-pill ${c.type}">${c.type === 'neutral' ? 'NPC' : c.type}</span></div>
       <div>
-        <div class="combatant-name">${escHtml(c.name)}
-          <small>${c.speed ? c.speed + 'ft' : ''} ${c.notes ? '· ' + c.notes.slice(0,30) : ''}</small>
+        <div class="combatant-name">${escH(c.name)}</div>
+        ${subInfo ? `<div class="combatant-sub">${subInfo}</div>` : ''}
+      </div>
+      <div class="hp-cell">
+        <div class="hp-row">
+          <span class="hp-text" onclick="openHPModal(${c.id})" title="Click to edit">${c.currentHP}/${c.maxHP}</span>
         </div>
+        <div class="hp-bar-bg"><div class="hp-bar-fill ${fillCls}" style="width:${pct}%"></div></div>
       </div>
-      <div class="hp-display">
-        <div style="display:flex;align-items:center;gap:4px;">
-          <span class="hp-numbers" style="cursor:pointer;" onclick="openHPModal(${c.id})" title="Click to edit HP">${c.currentHP}/${c.maxHP}</span>
-          <button class="hp-edit-btn" onclick="openHPModal(${c.id})">✎</button>
-        </div>
-        <div class="hp-bar-bg"><div class="hp-bar-fill ${barClass}" style="width:${hpPct}%"></div></div>
+      <div class="ac-cell">
+        <div class="ac-val">${c.ac}</div>
+        <div class="ac-lbl">AC</div>
       </div>
-      <div class="ac-display">
-        <div class="ac-value">🛡 ${c.ac}</div>
-      </div>
-      <div class="conditions-display">
-        ${condTags || '<span style="color:var(--text-muted);font-size:0.75rem;font-style:italic;">—</span>'}
-        <span class="condition-tag" style="border-style:dashed; cursor:pointer;" onclick="openCondModal(${c.id})">+</span>
+      <div class="conditions-cell">
+        ${condTags || ''}
+        <span class="cond-add" onclick="openCondModal(${c.id})" title="Add condition">+ Cond</span>
       </div>
       <div class="row-actions">
-        <button class="btn btn-icon btn-ghost" title="Traits & Abilities" onclick="openTraitsModal(${c.id})">⚡</button>
-        <button class="btn btn-icon btn-ghost" title="${c.dead ? 'Revive' : 'Mark Dead'}" onclick="toggleDead(${c.id})">${c.dead ? '💚' : '💀'}</button>
-      </div>
-      <div>
+        <button class="btn btn-icon btn-ghost" title="Traits" onclick="openTraitsModal(${c.id})">⚡</button>
+        <button class="btn btn-icon btn-ghost" title="${c.dead?'Revive':'Mark Dead'}" onclick="toggleDead(${c.id})">${c.dead ? '💚' : '💀'}</button>
         <button class="btn btn-icon btn-danger" title="Remove" onclick="removeCombatant(${c.id})">✕</button>
       </div>
     </div>`;
   }).join('');
-  // Update linked sheet dropdown
   updateLinkedDropdown();
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ─── Conditions modal
-let condTargetId = null;
+// ─── Conditions
+let condTarget = null;
 function openCondModal(id) {
-  condTargetId = id;
-  const c = state.combatants.find(x => x.id === id);
+  condTarget = id;
+  const c = S.combatants.find(x => x.id === id);
   document.getElementById('cond-modal-name').textContent = c.name;
-  const picker = document.getElementById('cond-modal-picker');
-  picker.innerHTML = CONDITIONS.map(cd => `
-    <button class="cond-toggle ${c.conditions.includes(cd) ? 'on' : ''}" onclick="toggleCondition(${id},'${cd}',this)">${cd}</button>
-  `).join('');
-  document.getElementById('cond-modal').classList.add('open');
+  document.getElementById('cond-picker').innerHTML = CONDITIONS.map(cd =>
+    `<button class="cond-toggle ${c.conditions.includes(cd)?'on':''}" onclick="toggleCond(${id},'${cd}',this)">${cd}</button>`
+  ).join('');
+  openModal('cond-modal');
 }
-function closeCondModal() { document.getElementById('cond-modal').classList.remove('open'); }
-function toggleCondition(id, cond, btn) {
-  const c = state.combatants.find(x => x.id === id);
+function toggleCond(id, cond, btn) {
+  const c = S.combatants.find(x => x.id === id);
   if (!c) return;
   const idx = c.conditions.indexOf(cond);
-  if (idx === -1) c.conditions.push(cond);
-  else c.conditions.splice(idx, 1);
+  if (idx === -1) c.conditions.push(cond); else c.conditions.splice(idx, 1);
   btn.classList.toggle('on');
-  save();
-  renderCombatants();
+  save(); renderCombatants();
 }
 function removeCondition(id, cond) {
-  const c = state.combatants.find(x => x.id === id);
+  const c = S.combatants.find(x => x.id === id);
   if (!c) return;
   c.conditions = c.conditions.filter(x => x !== cond);
-  save();
-  renderCombatants();
-}
-
-// ─── Traits modal
-let traitsTargetId = null;
-function openTraitsModal(id) {
-  traitsTargetId = id;
-  const c = state.combatants.find(x => x.id === id);
-  document.getElementById('traits-modal-name').textContent = c.name;
-  renderTraitsModal(c);
-  document.getElementById('traits-modal').classList.add('open');
-}
-function closeTraitsModal() { document.getElementById('traits-modal').classList.remove('open'); }
-function renderTraitsModal(c) {
-  const list = document.getElementById('traits-modal-list');
-  if (!c.traits || c.traits.length === 0) {
-    list.innerHTML = '<div class="empty-state" style="padding:16px; font-size:0.85rem;">No traits yet.</div>';
-    return;
-  }
-  list.innerHTML = c.traits.map((t, i) => `
-    <div class="trait-item">
-      <span class="trait-bullet">◆</span>
-      <div>
-        <div class="trait-name">${escHtml(t.name)}</div>
-        ${t.desc ? `<div class="trait-desc">${escHtml(t.desc)}</div>` : ''}
-      </div>
-      <span class="trait-remove" onclick="removeTrait(${i})">✕</span>
-    </div>
-  `).join('');
-}
-function addTraitFromModal() {
-  const name = document.getElementById('tm-trait-name').value.trim();
-  if (!name) { toast('Trait name required'); return; }
-  const desc = document.getElementById('tm-trait-desc').value.trim();
-  const c = state.combatants.find(x => x.id === traitsTargetId);
-  if (!c) return;
-  if (!c.traits) c.traits = [];
-  c.traits.push({ name, desc });
-  document.getElementById('tm-trait-name').value = '';
-  document.getElementById('tm-trait-desc').value = '';
-  save();
-  renderTraitsModal(c);
-}
-function removeTrait(idx) {
-  const c = state.combatants.find(x => x.id === traitsTargetId);
-  if (!c) return;
-  c.traits.splice(idx, 1);
-  save();
-  renderTraitsModal(c);
+  save(); renderCombatants();
 }
 
 // ─── HP modal
-let hpTargetId = null;
+let hpTarget = null;
 function openHPModal(id) {
-  hpTargetId = id;
-  const c = state.combatants.find(x => x.id === id);
+  hpTarget = id;
+  const c = S.combatants.find(x => x.id === id);
   document.getElementById('hp-modal-name').textContent = c.name;
-  document.getElementById('hpm-current').value = c.currentHP;
+  document.getElementById('hpm-cur').value = c.currentHP;
   document.getElementById('hpm-max').value = c.maxHP;
-  document.getElementById('hp-modal').classList.add('open');
+  openModal('hp-modal');
 }
-function closeHPModal() { document.getElementById('hp-modal').classList.remove('open'); }
-function saveHP() {
-  const c = state.combatants.find(x => x.id === hpTargetId);
-  if (!c) return;
-  c.currentHP = parseInt(document.getElementById('hpm-current').value) || 0;
-  c.maxHP = parseInt(document.getElementById('hpm-max').value) || c.maxHP;
-  c.currentHP = Math.min(c.currentHP, c.maxHP);
-  save();
-  renderCombatants();
-  closeHPModal();
-}
-function quickHP(delta, fullHeal) {
-  const cur = parseInt(document.getElementById('hpm-current').value) || 0;
+function hpDelta(delta) {
+  const cur = parseInt(document.getElementById('hpm-cur').value) || 0;
   const max = parseInt(document.getElementById('hpm-max').value) || 1;
-  const next = fullHeal ? max : Math.min(max, Math.max(0, cur + delta));
-  document.getElementById('hpm-current').value = next;
+  document.getElementById('hpm-cur').value = Math.min(max, Math.max(0, cur + delta));
+}
+function hpFull() {
+  document.getElementById('hpm-cur').value = document.getElementById('hpm-max').value;
+}
+function saveHP() {
+  const c = S.combatants.find(x => x.id === hpTarget);
+  if (!c) return;
+  c.maxHP = parseInt(document.getElementById('hpm-max').value) || c.maxHP;
+  c.currentHP = Math.min(parseInt(document.getElementById('hpm-cur').value) || 0, c.maxHP);
+  if (c.currentHP <= 0 && !c.dead) { c.dead = true; toast(`${c.name} has fallen!`); }
+  save(); renderCombatants(); closeModal('hp-modal');
 }
 
-// ─── Linked character dropdown
+// ─── Traits modal
+let traitsTarget = null;
+function openTraitsModal(id) {
+  traitsTarget = id;
+  const c = S.combatants.find(x => x.id === id);
+  document.getElementById('traits-modal-name').textContent = c.name;
+  renderTraitsList(c);
+  openModal('traits-modal');
+}
+function renderTraitsList(c) {
+  const el = document.getElementById('traits-modal-list');
+  if (!c.traits || !c.traits.length) { el.innerHTML = '<div class="empty-state" style="padding:16px;font-size:0.85rem;">No traits yet.</div>'; return; }
+  el.innerHTML = c.traits.map((t,i) => `
+    <div class="trait-item">
+      <div style="flex:1;">
+        <div class="trait-name">${escH(t.name)}</div>
+        ${t.desc ? `<div class="trait-desc">${escH(t.desc)}</div>` : ''}
+      </div>
+      <span class="trait-remove" onclick="removeTrait(${i})">✕</span>
+    </div>`).join('');
+}
+function addTraitModal() {
+  const name = document.getElementById('tm-name').value.trim();
+  if (!name) { toast('Need a trait name'); return; }
+  const c = S.combatants.find(x => x.id === traitsTarget);
+  if (!c.traits) c.traits = [];
+  c.traits.push({ name, desc: document.getElementById('tm-desc').value.trim() });
+  document.getElementById('tm-name').value = '';
+  document.getElementById('tm-desc').value = '';
+  save(); renderTraitsList(c);
+}
+function removeTrait(i) {
+  const c = S.combatants.find(x => x.id === traitsTarget);
+  if (!c) return;
+  c.traits.splice(i, 1);
+  save(); renderTraitsList(c);
+}
+
 function updateLinkedDropdown() {
   const sel = document.getElementById('f-linked');
   const val = sel.value;
   sel.innerHTML = '<option value="">— None —</option>' +
-    state.characters.map(ch => `<option value="${ch.id}" ${val == ch.id ? 'selected' : ''}>${escHtml(ch.name)}</option>`).join('');
+    S.characters.map(ch => `<option value="${ch.id}" ${val==ch.id?'selected':''}>${escH(ch.name)}</option>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════
-//   CHARACTER SHEETS
-// ═══════════════════════════════════════════════════════════════
-let editingCharId = null;
+// ═══════════════════════════════════════════════════════
+//  CHARACTER SHEETS
+// ═══════════════════════════════════════════════════════
+let editingChar = null;
+
 function openCharModal(id) {
-  editingCharId = id || null;
-  const modal = document.getElementById('char-modal');
+  editingChar = id || null;
   if (id) {
-    const ch = state.characters.find(x => x.id === id);
+    const ch = S.characters.find(x => x.id === id);
     document.getElementById('char-modal-title').textContent = 'Edit Character';
     fillCharForm(ch);
   } else {
     document.getElementById('char-modal-title').textContent = 'New Character';
     clearCharForm();
   }
-  modal.classList.add('open');
+  openModal('char-modal');
 }
-function closeCharModal() { document.getElementById('char-modal').classList.remove('open'); }
+
+function g(id) { return document.getElementById(id).value; }
+function gi(id) { return parseInt(g(id)) || 0; }
+function s(id, v) { document.getElementById(id).value = v || ''; }
 
 function fillCharForm(ch) {
-  const f = (id, v) => { document.getElementById(id).value = v || ''; };
-  f('cm-name', ch.name); f('cm-player', ch.player); f('cm-class', ch.cls);
-  f('cm-race', ch.race); f('cm-level', ch.level); f('cm-bg', ch.background);
-  f('cm-align', ch.alignment); f('cm-xp', ch.xp);
-  f('cm-str', ch.str); f('cm-dex', ch.dex); f('cm-con', ch.con);
-  f('cm-int', ch.int); f('cm-wis', ch.wis); f('cm-cha', ch.cha);
-  f('cm-hp', ch.hp); f('cm-ac', ch.ac); f('cm-speed', ch.speed);
-  f('cm-initbonus', ch.initBonus); f('cm-saves', (ch.saves||[]).join(', '));
-  f('cm-skills', (ch.skills||[]).join(', '));
-  f('cm-features', (ch.features||[]).map(ft => ft.name + ': ' + ft.desc).join('\n'));
-  f('cm-equipment', ch.equipment); f('cm-notes', ch.notes);
+  s('cm-name',ch.name); s('cm-player',ch.player); s('cm-class',ch.cls);
+  s('cm-race',ch.race); s('cm-level',ch.level); s('cm-prof',ch.prof);
+  s('cm-bg',ch.background); s('cm-align',ch.alignment); s('cm-xp',ch.xp);
+  s('cm-str',ch.str); s('cm-dex',ch.dex); s('cm-con',ch.con);
+  s('cm-int',ch.int); s('cm-wis',ch.wis); s('cm-cha',ch.cha);
+  s('cm-hp',ch.hp); s('cm-ac',ch.ac); s('cm-speed',ch.speed);
+  s('cm-initbonus',ch.initBonus); s('cm-pp',ch.pp); s('cm-spelldc',ch.spellDC);
+  s('cm-saves',(ch.saves||[]).join(', ')); s('cm-skills',(ch.skills||[]).join(', '));
+  s('cm-features',(ch.features||[]).map(f=>f.name+': '+f.desc).join('\n'));
+  s('cm-equip',ch.equipment); s('cm-notes',ch.notes);
 }
 
 function clearCharForm() {
-  ['cm-name','cm-player','cm-class','cm-race','cm-level','cm-bg','cm-align','cm-xp',
+  ['cm-name','cm-player','cm-class','cm-race','cm-level','cm-prof','cm-bg','cm-align','cm-xp',
    'cm-str','cm-dex','cm-con','cm-int','cm-wis','cm-cha','cm-hp','cm-ac','cm-speed',
-   'cm-initbonus','cm-saves','cm-skills','cm-features','cm-equipment','cm-notes'
-  ].forEach(id => document.getElementById(id).value = '');
+   'cm-initbonus','cm-pp','cm-spelldc','cm-saves','cm-skills','cm-features','cm-equip','cm-notes'
+  ].forEach(id => s(id, ''));
 }
 
 function saveChar() {
-  const name = document.getElementById('cm-name').value.trim();
+  const name = g('cm-name').trim();
   if (!name) { toast('Name is required'); return; }
-  const g = id => document.getElementById(id).value;
-  const gi = id => parseInt(g(id)) || 0;
-
-  const featuresRaw = g('cm-features').split('\n').filter(l => l.trim());
-  const features = featuresRaw.map(l => {
-    const idx = l.indexOf(':');
-    return idx === -1 ? {name: l.trim(), desc: ''} : {name: l.slice(0,idx).trim(), desc: l.slice(idx+1).trim()};
+  const feats = g('cm-features').split('\n').filter(l=>l.trim()).map(l => {
+    const i = l.indexOf(':');
+    return i === -1 ? {name:l.trim(),desc:''} : {name:l.slice(0,i).trim(), desc:l.slice(i+1).trim()};
   });
-
   const ch = {
-    id: editingCharId || Date.now(),
+    id: editingChar || Date.now(),
     name, player: g('cm-player'), cls: g('cm-class'), race: g('cm-race'),
-    level: gi('cm-level') || 1, background: g('cm-bg'), alignment: g('cm-align'), xp: gi('cm-xp'),
-    str: gi('cm-str'), dex: gi('cm-dex'), con: gi('cm-con'),
-    int: gi('cm-int'), wis: gi('cm-wis'), cha: gi('cm-cha'),
-    hp: gi('cm-hp'), ac: gi('cm-ac'), speed: gi('cm-speed'), initBonus: gi('cm-initbonus'),
-    saves: g('cm-saves').split(',').map(s=>s.trim()).filter(Boolean),
-    skills: g('cm-skills').split(',').map(s=>s.trim()).filter(Boolean),
-    features, equipment: g('cm-equipment'), notes: g('cm-notes')
+    level: gi('cm-level')||1, prof: gi('cm-prof'),
+    background: g('cm-bg'), alignment: g('cm-align'), xp: gi('cm-xp'),
+    str:gi('cm-str'),dex:gi('cm-dex'),con:gi('cm-con'),
+    int:gi('cm-int'),wis:gi('cm-wis'),cha:gi('cm-cha'),
+    hp:gi('cm-hp'),ac:gi('cm-ac'),speed:gi('cm-speed'),
+    initBonus:gi('cm-initbonus'), pp:gi('cm-pp'), spellDC:gi('cm-spelldc'),
+    saves: g('cm-saves').split(',').map(x=>x.trim()).filter(Boolean),
+    skills: g('cm-skills').split(',').map(x=>x.trim()).filter(Boolean),
+    features: feats, equipment: g('cm-equip'), notes: g('cm-notes')
   };
-
-  if (editingCharId) {
-    const idx = state.characters.findIndex(x => x.id === editingCharId);
-    if (idx !== -1) state.characters[idx] = ch;
-  } else {
-    state.characters.push(ch);
-  }
-  save();
-  renderCharSheets();
-  updateLinkedDropdown();
-  closeCharModal();
-  toast(`${name} saved!`);
+  if (editingChar) {
+    const i = S.characters.findIndex(x=>x.id===editingChar);
+    if (i !== -1) S.characters[i] = ch;
+  } else S.characters.push(ch);
+  save(); renderChars(); updateLinkedDropdown();
+  closeModal('char-modal'); toast(`${name} saved!`);
 }
 
 function deleteChar(id) {
-  if (!confirm('Delete this character?')) return;
-  state.characters = state.characters.filter(x => x.id !== id);
-  save();
-  renderCharSheets();
-  updateLinkedDropdown();
+  if (!confirm('Delete this character sheet?')) return;
+  S.characters = S.characters.filter(x=>x.id!==id);
+  save(); renderChars(); updateLinkedDropdown();
 }
 
-function mod(score) {
-  const m = Math.floor((score - 10) / 2);
-  return (m >= 0 ? '+' : '') + m;
+function calcMod(score) {
+  const m = Math.floor((score-10)/2);
+  return (m>=0?'+':'')+m;
 }
 
-function renderCharSheets() {
-  const list = document.getElementById('char-sheet-list');
-  if (state.characters.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">📜</div>No characters yet. Create one above!</div>';
+function renderChars() {
+  const grid = document.getElementById('char-grid');
+  if (!S.characters.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">📜</div>No characters yet. Create one above!</div>';
     return;
   }
   const STATS = ['str','dex','con','int','wis','cha'];
   const LABELS = ['STR','DEX','CON','INT','WIS','CHA'];
-  list.innerHTML = state.characters.map(ch => `
-    <div class="char-card">
-      <div class="char-card-header">
+  grid.innerHTML = S.characters.map(ch => {
+    const hpPct = 100; // full by default on card
+    return `<div class="char-card">
+      <div class="char-header">
         <div>
-          <div class="char-card-name">${escHtml(ch.name)}</div>
-          <div class="char-card-meta">${ch.cls || '—'} ${ch.level ? 'Lv.' + ch.level : ''} · ${ch.race || '—'}</div>
+          <div class="char-name">${escH(ch.name)}</div>
+          <div class="char-meta">${ch.cls||'—'} · ${ch.race||'—'}${ch.background?' · '+ch.background:''}</div>
+          ${ch.player ? `<div class="char-meta" style="margin-top:2px;">Player: ${escH(ch.player)}</div>` : ''}
         </div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-ghost btn-sm" onclick="openCharModal(${ch.id})">Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteChar(${ch.id})">Del</button>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span class="char-level-badge">Lv. ${ch.level}</span>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-ghost btn-sm" onclick="openCharModal(${ch.id})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteChar(${ch.id})">Del</button>
+          </div>
         </div>
       </div>
-      <div class="char-card-body">
-        <div class="stat-grid">
-          ${STATS.map((s,i) => `
-            <div class="stat-box">
-              <label>${LABELS[i]}</label>
-              <div class="stat-score">${ch[s] || '—'}</div>
-              <div class="stat-mod">${ch[s] ? mod(ch[s]) : ''}</div>
-            </div>
-          `).join('')}
+      <div class="char-body">
+        <!-- Core combat stats -->
+        <div class="core-stats" style="margin-bottom:12px;">
+          <div class="core-stat-box">
+            <div class="core-stat-label">HP</div>
+            <div class="core-stat-val">${ch.hp||'—'}</div>
+          </div>
+          <div class="core-stat-box">
+            <div class="core-stat-label">AC</div>
+            <div class="core-stat-val">${ch.ac||'—'}</div>
+          </div>
+          <div class="core-stat-box">
+            <div class="core-stat-label">Speed</div>
+            <div class="core-stat-val">${ch.speed||30}<span style="font-size:0.6em;font-weight:400;">ft</span></div>
+          </div>
         </div>
-        <div class="flex-row" style="margin-bottom:10px; flex-wrap:wrap; gap:14px; font-size:0.85rem; color:var(--text-secondary);">
-          <span>❤ ${ch.hp} HP</span>
-          <span>🛡 ${ch.ac} AC</span>
-          <span>⚡ ${ch.speed || 30}ft</span>
-          <span>${ch.background || ''} ${ch.alignment ? '· ' + ch.alignment : ''}</span>
+
+        <!-- Ability scores -->
+        <div class="ability-row">
+          ${STATS.map((s,i) => `<div class="ability-box">
+            <label>${LABELS[i]}</label>
+            <div class="ability-score">${ch[s]||'—'}</div>
+            <div class="ability-mod">${ch[s]?calcMod(ch[s]):''}</div>
+          </div>`).join('')}
         </div>
-        ${ch.saves && ch.saves.length ? `<div class="save-profs">${ch.saves.map(s => `<span class="save-chip">${s}</span>`).join('')}</div>` : ''}
-        ${ch.skills && ch.skills.length ? `<div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;font-style:italic;">Skills: ${ch.skills.join(', ')}</div>` : ''}
-        ${ch.features && ch.features.length ? `
-          <div class="feature-list-sm">
-            ${ch.features.slice(0,4).map(f => `<div class="feature-item-sm"><span>${escHtml(f.name)}</span>${escHtml(f.desc)}</div>`).join('')}
-            ${ch.features.length > 4 ? `<div style="font-size:0.75rem;color:var(--text-muted);padding:4px 10px;">+${ch.features.length-4} more...</div>` : ''}
-          </div>` : ''}
-        ${ch.equipment ? `<div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">⚔ ${escHtml(ch.equipment).slice(0,100)}${ch.equipment.length>100?'…':''}</div>` : ''}
-        ${ch.player ? `<div style="margin-top:6px;font-size:0.75rem;color:var(--text-muted);font-style:italic;">Player: ${escHtml(ch.player)}</div>` : ''}
+
+        <!-- Secondary stats chips -->
+        <div class="chip-row">
+          ${ch.initBonus ? `<span class="chip chip-gold">Init +${ch.initBonus}</span>` : ''}
+          ${ch.pp ? `<span class="chip chip-sky">PP ${ch.pp}</span>` : ''}
+          ${ch.spellDC ? `<span class="chip chip-sky">Spell DC ${ch.spellDC}</span>` : ''}
+          ${ch.prof ? `<span class="chip chip-gold">Prof +${ch.prof}</span>` : ''}
+          ${ch.alignment ? `<span class="chip chip-gold">${escH(ch.alignment)}</span>` : ''}
+        </div>
+
+        <!-- Save proficiencies -->
+        ${ch.saves&&ch.saves.length ? `<div class="chip-row">
+          ${ch.saves.map(s=>`<span class="chip chip-jade">Save: ${escH(s)}</span>`).join('')}
+        </div>` : ''}
+
+        <!-- Skills -->
+        ${ch.skills&&ch.skills.length ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;font-style:italic;"><strong style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;color:var(--text-muted);">SKILLS</strong> ${ch.skills.join(', ')}</div>` : ''}
+
+        <!-- Equipment -->
+        ${ch.equipment ? `<div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:10px;">⚔ ${escH(ch.equipment).slice(0,120)}${ch.equipment.length>120?'…':''}</div>` : ''}
+
+        <!-- Features -->
+        ${ch.features&&ch.features.length ? `<div class="feature-list">
+          ${ch.features.slice(0,4).map(f=>`<div class="feature-item">
+            <span class="feature-item-name">${escH(f.name)}</span>${escH(f.desc)}
+          </div>`).join('')}
+          ${ch.features.length>4?`<div style="font-size:0.72rem;color:var(--text-muted);padding:4px 10px;font-style:italic;">+${ch.features.length-4} more features</div>`:''}
+        </div>` : ''}
+
+        <!-- Notes -->
+        ${ch.notes ? `<div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);font-style:italic;border-top:1px solid var(--border);padding-top:8px;">${escH(ch.notes).slice(0,160)}${ch.notes.length>160?'…':''}</div>` : ''}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════
-//   DICE ROLLER
-// ═══════════════════════════════════════════════════════════════
-let selectedDie = 20;
-
-function selectDie(sides, btn) {
-  selectedDie = sides;
-  document.querySelectorAll('.dice-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  if (sides !== 'custom') document.getElementById('dice-sides').value = '';
-  else document.getElementById('dice-sides').focus();
-}
-
-function focusCustomDie(btn) {
-  selectDie('custom', btn);
-}
-
-function rollD(sides) {
-  return Math.floor(Math.random() * sides) + 1;
-}
-
-function rollDice() {
-  const count = parseInt(document.getElementById('dice-count').value) || 1;
-  let sides = selectedDie === 'custom'
-    ? (parseInt(document.getElementById('dice-sides').value) || 6)
-    : selectedDie;
-  const mod = parseInt(document.getElementById('dice-mod').value) || 0;
-
-  const rolls = Array.from({length: count}, () => rollD(sides));
-  const sum = rolls.reduce((a,b)=>a+b,0) + mod;
-
-  displayResult(rolls, sides, mod, sum, `${count}d${sides}${mod !== 0 ? (mod>0?'+':'')+mod : ''}`);
-  animateDiceBtns();
-}
-
-function rollAdvantage() {
-  let sides = selectedDie === 'custom' ? (parseInt(document.getElementById('dice-sides').value)||6) : selectedDie;
-  const mod = parseInt(document.getElementById('dice-mod').value) || 0;
-  const r1 = rollD(sides), r2 = rollD(sides);
-  const best = Math.max(r1, r2);
-  displayResult([r1, r2], sides, mod, best + mod, `Adv. 2d${sides}`, `Kept: ${best} (rolled ${r1}, ${r2})`);
-  animateDiceBtns();
-}
-
-function rollDisadvantage() {
-  let sides = selectedDie === 'custom' ? (parseInt(document.getElementById('dice-sides').value)||6) : selectedDie;
-  const mod = parseInt(document.getElementById('dice-mod').value) || 0;
-  const r1 = rollD(sides), r2 = rollD(sides);
-  const worst = Math.min(r1, r2);
-  displayResult([r1, r2], sides, mod, worst + mod, `Dis. 2d${sides}`, `Kept: ${worst} (rolled ${r1}, ${r2})`);
-  animateDiceBtns();
-}
-
-function rollExpression() {
-  const expr = document.getElementById('dice-expr').value.trim();
-  if (!expr) return;
-  try {
-    const result = parseExpr(expr);
-    displayResult(result.rolls, null, result.flat, result.total, expr);
-    animateDiceBtns();
-  } catch(e) { toast('Invalid expression'); }
-}
-
-function quickRoll(expr, label) {
-  try {
-    const result = parseExpr(expr);
-    displayResult(result.rolls, null, result.flat, result.total, label || expr);
-  } catch(e) { toast('Invalid expression'); }
-}
-
-function parseExpr(expr) {
-  // Parse expressions like 2d6+1d8-3
-  const tokens = expr.toLowerCase().replace(/\s/g,'').match(/[+-]?[^+-]+/g) || [];
-  let total = 0, allRolls = [], flatBonus = 0;
-  for (const token of tokens) {
-    const sign = token[0] === '-' ? -1 : 1;
-    const t = token.replace(/^[+-]/,'');
-    const match = t.match(/^(\d+)d(\d+)$/);
-    if (match) {
-      const count = parseInt(match[1]);
-      const sides = parseInt(match[2]);
-      const rolls = Array.from({length: count}, () => rollD(sides));
-      rolls.forEach(r => allRolls.push({v: r * sign, sides}));
-      total += rolls.reduce((a,b)=>a+b,0) * sign;
-    } else {
-      const n = parseInt(t);
-      if (!isNaN(n)) { total += n * sign; flatBonus += n * sign; }
-    }
-  }
-  return { rolls: allRolls, flat: flatBonus, total };
-}
-
-function displayResult(rolls, sides, mod, total, expr, detail) {
-  const totalEl = document.getElementById('roll-total');
-  const detailEl = document.getElementById('roll-detail');
-  const bdEl = document.getElementById('roll-breakdown');
-
-  totalEl.className = 'roll-total';
-  if (sides === 20 && rolls.length === 1) {
-    const v = Array.isArray(rolls[0]) ? rolls[0] : (rolls[0].v !== undefined ? rolls[0].v : rolls[0]);
-    if (v === 20) totalEl.classList.add('crit');
-    else if (v === 1) totalEl.classList.add('fumble');
-  }
-
-  totalEl.textContent = total;
-  totalEl.classList.add('animate');
-  setTimeout(() => totalEl.classList.remove('animate'), 400);
-
-  if (detail) {
-    detailEl.textContent = detail;
-  } else {
-    const parts = [];
-    if (rolls.length > 0) {
-      const rollStrs = rolls.map(r => typeof r === 'object' ? r.v : r).join(' + ');
-      parts.push(rollStrs);
-    }
-    if (mod) parts.push((mod > 0 ? '+ ' : '- ') + Math.abs(mod));
-    detailEl.textContent = expr + (parts.length ? ' = ' + parts.join(' ') : '');
-  }
-
-  // Breakdown chips
-  if (Array.isArray(rolls) && rolls.length > 0 && rolls.length <= 20) {
-    bdEl.innerHTML = rolls.map(r => {
-      const val = typeof r === 'object' ? r.v : r;
-      const s = typeof r === 'object' ? r.sides : sides;
-      const isMax = s && val === s;
-      const isMin = val === 1 || (typeof r === 'object' && r.v === 1);
-      return `<span class="die-result-chip ${isMax?'max':''} ${isMin?'min':''}">${val > 0 ? val : val}</span>`;
-    }).join('');
-  } else { bdEl.innerHTML = ''; }
-
-  // Log
-  addLog(expr, total);
-}
-
-function addLog(expr, total) {
-  state.rollLog.unshift({ expr, total, t: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) });
-  if (state.rollLog.length > 50) state.rollLog.pop();
-  renderLog();
-}
-
-function renderLog() {
-  const log = document.getElementById('roll-log');
-  if (state.rollLog.length === 0) {
-    log.innerHTML = '<div class="empty-state" style="padding:16px;font-size:0.85rem;">No rolls yet</div>';
-    return;
-  }
-  log.innerHTML = state.rollLog.map(entry => `
-    <div class="log-entry">
-      <span class="log-expr">${escHtml(entry.expr)} <span style="font-size:0.7rem;color:var(--text-muted)">${entry.t}</span></span>
-      <span class="log-total">${entry.total}</span>
-    </div>
-  `).join('');
-}
-
-function clearLog() {
-  state.rollLog = [];
-  renderLog();
-}
-
-function animateDiceBtns() {
-  document.querySelectorAll('.dice-btn.selected').forEach(btn => {
-    btn.classList.add('rolling');
-    setTimeout(() => btn.classList.remove('rolling'), 400);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//   CLOSE MODALS ON OVERLAY CLICK
-// ═══════════════════════════════════════════════════════════════
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
-});
-
-// ═══════════════════════════════════════════════════════════════
-//   INIT
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
 renderCombatants();
-renderCharSheets();
-renderLog();
+renderChars();
 updateLinkedDropdown();
-document.getElementById('round-number').textContent = state.round;
+updateRoundBar();
 
-// Select d20 by default
-document.querySelector('.dice-btn[data-die="20"]').classList.add('selected');
+// Restore notes
+const savedNotes = localStorage.getItem('veilara2-notes');
+if (savedNotes) document.getElementById('combat-notes').value = savedNotes;
+document.getElementById('combat-notes').addEventListener('input', function() {
+  localStorage.setItem('veilara2-notes', this.value);
+});
 </script>
 </body>
 </html>
