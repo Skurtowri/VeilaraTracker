@@ -6,523 +6,416 @@
 <title>Veilara — Combat Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════════════
-   TOKENS
-══════════════════════════════════════════════════════ */
-:root {
-  --bg0:#322420;--bg1:#100d09;--bg2:#17120d;--bg3:#1e1810;--bg4:#272015;
-  --border:#332a1e;--border2:#4a3a26;--border3:#6a5535;
-  --gold:#c4722a;--gold2:#e0a840;--gold3:#f0c060;--gold-dim:#582012;--gold-bg:rgba(196,136,42,.08);
-  --red:#7a1515;--red2:#b03030;--red3:#e05040;--red-bg:rgba(122,21,21,.12);
-  --green:#1a5e3a;--green2:#27905e;--green3:#40c080;--green-bg:rgba(26,94,58,.1);
-  --blue:#1a3a6a;--blue2:#2870b0;--blue-bg:rgba(26,58,106,.12);
-  --text:#e0d0b8;--text2:#a08868;--text3:#6a5540;--text4:#3a2e22;
+:root{
+  --bg0:#070604;--bg1:#0f0c08;--bg2:#161109;--bg3:#1c160e;--bg4:#242019;
+  --border:#2a2016;--border2:#42301a;--border3:#6a4e28;
+  --gold:#c4882a;--gold2:#e0aa42;--gold3:#f5c860;--gold-dim:#7a5018;--gold-bg:rgba(196,136,42,.09);
+  --red:#7a1515;--red2:#b03030;--red3:#e05040;--red-bg:rgba(122,21,21,.13);
+  --green:#185a38;--green2:#279060;--green3:#3ec878;--green-bg:rgba(24,90,56,.11);
+  --blue:#1a3868;--blue2:#2870b0;--blue3:#60a8e0;--blue-bg:rgba(26,56,104,.13);
+  --purple:#5a1a8a;--purple2:#9040d0;--purple-bg:rgba(90,26,138,.13);
+  --text:#ddd0b8;--text2:#9e8460;--text3:#67503a;--text4:#3a2c1e;
   --r:5px;
-  --shadow:0 4px 20px rgba(0,0,0,.6);--shadow2:0 8px 40px rgba(0,0,0,.8);
+  --sh:0 4px 24px rgba(0,0,0,.65);--sh2:0 12px 56px rgba(0,0,0,.9);
 }
-
-/* ═══════════════════════════════════════════════════════
-   RESET + BASE
-══════════════════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{height:100%;overflow:hidden}
+html,body{height:100%;overflow:hidden}
 body{
-  height:100%;overflow:hidden;
   background:var(--bg0);
   background-image:
-    radial-gradient(ellipse 60% 30% at 50% 0%,rgba(196,136,42,.06) 0%,transparent 60%),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c4882a' fill-opacity='0.025'%3E%3Cpath d='M30 0l2 28H60L34 36 44 60 30 42 16 60 26 36 0 28H28z'/%3E%3C/g%3E%3C/svg%3E");
-  color:var(--text);
-  font-family:'Crimson Pro',Georgia,serif;
+    radial-gradient(ellipse 80% 40% at 50% 0%,rgba(196,136,42,.065) 0%,transparent 60%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c4882a' fill-opacity='0.02'%3E%3Cpath d='M30 0l2 28H60L34 36 44 60 30 42 16 60 26 36 0 28H28z'/%3E%3C/g%3E%3C/svg%3E");
+  color:var(--text);font-family:'Crimson Pro',Georgia,serif;
   display:flex;flex-direction:column;
 }
 
-/* ═══════════════════════════════════════════════════════
-   HEADER
-══════════════════════════════════════════════════════ */
-.header{
-  flex-shrink:0;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px;
-  background:var(--bg1);
-  border-bottom:1px solid var(--border2);
-  gap:16px;flex-wrap:wrap;
+/* ═══ PARTICLE CANVAS ═══ */
+#fx-canvas{position:fixed;inset:0;pointer-events:none;z-index:500}
+
+/* ═══ TURN BANNER ═══ */
+#turn-banner{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.7);
+  z-index:600;pointer-events:none;opacity:0;
+  font-family:'Cinzel Decorative',serif;font-size:2.4rem;color:var(--gold3);
+  text-shadow:0 0 60px rgba(196,136,42,.9),0 0 120px rgba(196,136,42,.5);
+  text-align:center;line-height:1.2;letter-spacing:.06em;
+  transition:none;white-space:nowrap;
 }
-.brand{display:flex;align-items:baseline;gap:12px}
-.brand-title{
-  font-family:'Cinzel Decorative',serif;font-size:1.4rem;
-  color:var(--gold2);text-shadow:0 0 24px rgba(196,136,42,.4);letter-spacing:.05em;
+#turn-banner.show{
+  animation:bannerIn .7s cubic-bezier(.2,1.4,.3,1) forwards,bannerOut .5s .9s ease-in forwards;
 }
-.brand-sub{
-  font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.35em;
-  text-transform:uppercase;color:var(--text3);
-}
+@keyframes bannerIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes bannerOut{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-58%) scale(.92)}}
+
+/* ═══ HEADER ═══ */
+.hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--bg1);border-bottom:1px solid var(--border2);gap:12px;flex-wrap:wrap;position:relative;z-index:10}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand-t{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--gold2);text-shadow:0 0 28px rgba(196,136,42,.45);letter-spacing:.05em}
+.brand-s{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.38em;text-transform:uppercase;color:var(--text3)}
 .nav-tabs{display:flex;gap:2px;background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);padding:3px}
-.nav-tab{
-  font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
-  padding:7px 18px;background:transparent;border:none;border-radius:3px;
-  color:var(--text3);cursor:pointer;transition:all .18s;
-}
+.nav-tab{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;padding:6px 16px;background:transparent;border:none;border-radius:3px;color:var(--text3);cursor:pointer;transition:all .18s}
 .nav-tab:hover{color:var(--text2);background:var(--bg2)}
-.nav-tab.active{background:var(--bg3);color:var(--gold2);font-weight:600;box-shadow:0 1px 6px rgba(0,0,0,.4)}
+.nav-tab.active{background:var(--bg3);color:var(--gold2);font-weight:600;box-shadow:0 1px 8px rgba(0,0,0,.5)}
+.hdr-sound{background:transparent;border:1px solid var(--border2);border-radius:3px;color:var(--text3);cursor:pointer;font-size:.8rem;padding:5px 9px;transition:all .18s}
+.hdr-sound:hover{border-color:var(--gold-dim);color:var(--gold)}
+.hdr-sound.on{color:var(--gold);border-color:var(--gold-dim)}
 
-/* ═══════════════════════════════════════════════════════
-   LAYOUT — THREE COLUMNS
-══════════════════════════════════════════════════════ */
-.app-body{flex:1;overflow:hidden;display:flex}
-.tab-pane{display:none;flex:1;overflow:hidden}
+/* ═══ LAYOUT ═══ */
+.app-body{flex:1;overflow:hidden;display:flex;min-height:0}
+.tab-pane{display:none;flex:1;overflow:hidden;min-height:0}
 .tab-pane.active{display:flex}
+.combat-layout{flex:1;display:grid;grid-template-columns:230px 1fr 272px;overflow:hidden;min-height:0}
 
-/* Combat layout: [enemy-deck | main | add-panel] */
-.combat-layout{flex:1;display:grid;grid-template-columns:220px 1fr 280px;gap:0;overflow:hidden}
-@media(max-width:900px){.combat-layout{grid-template-columns:180px 1fr 0}}
-@media(max-width:650px){.combat-layout{grid-template-columns:0 1fr 0}}
-
-/* ═══════════════════════════════════════════════════════
-   LEFT — ENEMY DECK
-══════════════════════════════════════════════════════ */
-.deck-panel{
-  background:var(--bg1);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.deck-header{
-  padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-}
-.deck-title{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
-.deck-scroll{flex:1;overflow-y:auto;padding:10px 8px;display:flex;flex-direction:column;gap:6px}
+/* ═══ LEFT — ENEMY DECK ═══ */
+.deck-panel{background:var(--bg1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.deck-hdr{padding:10px 12px 8px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.deck-title{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.deck-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 7px 6px;display:flex;flex-direction:column;gap:6px;min-height:0}
 .deck-scroll::-webkit-scrollbar{width:3px}
-.deck-scroll::-webkit-scrollbar-track{background:var(--bg0)}
+.deck-scroll::-webkit-scrollbar-track{background:transparent}
 .deck-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-/* Enemy card in deck */
-.deck-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
-  padding:10px 11px;cursor:grab;user-select:none;
-  transition:all .18s;position:relative;border-left:3px solid transparent;
-}
-.deck-card:hover{border-color:var(--border2);border-left-color:var(--red2);background:var(--bg3);transform:translateX(2px)}
-.deck-card:active{cursor:grabbing;transform:scale(.97)}
-.deck-card.dragging{opacity:.5;transform:rotate(-2deg) scale(.95)}
-.deck-card-name{font-family:'Cinzel',serif;font-size:.75rem;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.deck-card-stats{display:flex;gap:8px;margin-top:4px;font-size:.72rem;color:var(--text3)}
-.deck-card-stats span{color:var(--text2)}
-.deck-card-type{
-  font-family:'Cinzel',serif;font-size:.45rem;letter-spacing:.12em;text-transform:uppercase;
-  padding:1px 5px;border-radius:2px;margin-top:4px;display:inline-block;
-}
-.deck-card-type.enemy{background:var(--red-bg);color:var(--red3);border:1px solid var(--red)}
-.deck-card-type.neutral{background:var(--gold-bg);color:var(--gold2);border:1px solid var(--gold-dim)}
-.deck-card-type.boss{background:rgba(180,40,180,.1);color:#c060d0;border:1px solid #8030a0}
-.deck-card-actions{display:flex;gap:4px;margin-top:6px}
-.btn-deploy{
-  font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;
-  padding:4px 8px;background:var(--red-bg);border:1px solid var(--red);
-  color:var(--red3);border-radius:3px;cursor:pointer;transition:all .15s;flex:1;text-align:center;
-}
-.btn-deploy:hover{background:rgba(122,21,21,.3);border-color:var(--red2)}
-.btn-deploy.neutral-deploy{background:var(--gold-bg);border-color:var(--gold-dim);color:var(--gold2)}
-.btn-deploy.neutral-deploy:hover{background:rgba(196,136,42,.2)}
-/* Drop zone on deck panel */
-.deck-dropzone{
-  border:2px dashed var(--border2);border-radius:var(--r);padding:12px;
-  text-align:center;font-family:'Cinzel',serif;font-size:.55rem;
-  letter-spacing:.15em;text-transform:uppercase;color:var(--text3);
-  margin:8px;flex-shrink:0;transition:all .2s;
-}
+/* Deck card */
+.dk-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);border-left:3px solid var(--border);overflow:hidden;transition:border-color .18s,background .18s,transform .15s,box-shadow .15s;cursor:grab;user-select:none;flex-shrink:0}
+.dk-card:hover{border-color:var(--border2);border-left-color:var(--red2);background:var(--bg3);transform:translateX(2px);box-shadow:var(--sh)}
+.dk-card:active{cursor:grabbing}
+.dk-card.dragging{opacity:.4;transform:rotate(-2deg) scale(.95)}
+.dk-card.boss-card{border-left-color:var(--purple)}
+.dk-card.boss-card:hover{border-left-color:var(--purple2)}
+.dk-top{padding:8px 10px 0}
+.dk-name{font-family:'Cinzel',serif;font-size:.76rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dk-meta{display:flex;gap:5px;margin-top:3px;font-size:.67rem;color:var(--text3);align-items:center;flex-wrap:wrap}
+.dk-meta span{color:var(--text2)}
+.dk-type-pip{font-family:'Cinzel',serif;font-size:.41rem;letter-spacing:.12em;text-transform:uppercase;padding:1px 5px;border-radius:2px;flex-shrink:0}
+.dk-type-pip.enemy{background:var(--red-bg);color:var(--red3);border:1px solid var(--red)}
+.dk-type-pip.neutral{background:var(--gold-bg);color:var(--gold2);border:1px solid var(--gold-dim)}
+.dk-type-pip.boss{background:var(--purple-bg);color:var(--purple2);border:1px solid var(--purple)}
+.dk-expand-btn{width:100%;padding:4px 10px;background:transparent;border:none;border-top:1px solid var(--border);color:var(--text3);cursor:pointer;font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.15em;text-transform:uppercase;text-align:center;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
+.dk-expand-btn:hover{background:rgba(196,136,42,.06);color:var(--gold)}
+.dk-expand-btn .arr{transition:transform .25s;display:inline-block}
+.dk-card.expanded .dk-expand-btn .arr{transform:rotate(180deg)}
+.dk-statblock{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1)}
+.dk-card.expanded .dk-statblock{max-height:800px}
+.dk-sb-inner{padding:7px 10px 10px;border-top:1px solid var(--border)}
+.dk-actions{display:flex;gap:4px;padding:5px 9px 7px}
+.btn-deploy{font-family:'Cinzel',serif;font-size:.47rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 8px;background:var(--red-bg);border:1px solid var(--red);color:var(--red3);border-radius:3px;cursor:pointer;transition:all .15s;flex:1;text-align:center}
+.btn-deploy:hover{background:rgba(122,21,21,.3);border-color:var(--red2);box-shadow:0 2px 10px rgba(176,48,48,.3)}
+.btn-deploy.npc-dep{background:var(--gold-bg);border-color:var(--gold-dim);color:var(--gold2)}
+.btn-deploy.npc-dep:hover{background:rgba(196,136,42,.2)}
+.btn-deploy.boss-dep{background:var(--purple-bg);border-color:var(--purple);color:var(--purple2)}
+.btn-deploy.boss-dep:hover{background:rgba(90,26,138,.25)}
+.deck-dropzone{border:2px dashed var(--border2);border-radius:var(--r);padding:9px;text-align:center;font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text4);margin:0 7px 7px;flex-shrink:0;transition:all .2s}
 .deck-dropzone.drag-over{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
 
-/* ═══════════════════════════════════════════════════════
-   CENTER — MAIN COMBAT
-══════════════════════════════════════════════════════ */
-.main-panel{
-  display:flex;flex-direction:column;overflow:hidden;
-  background:transparent;
-}
+/* Stat block inside deck card */
+.sb-div{height:1px;background:linear-gradient(90deg,transparent,var(--red2),transparent);margin:5px 0;opacity:.35}
+.sb-abs{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;margin:5px 0}
+.sb-ab{background:var(--bg1);border:1px solid var(--border);border-radius:3px;padding:3px 2px;text-align:center}
+.sb-ab-l{font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.08em;color:var(--text3);text-transform:uppercase}
+.sb-ab-v{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:var(--text)}
+.sb-ab-m{font-size:.55rem;color:var(--gold)}
+.sb-prop{font-size:.68rem;color:var(--text2);margin-bottom:2px;line-height:1.4}
+.sb-prop b{font-family:'Cinzel',serif;font-size:.56rem;color:var(--gold);margin-right:3px}
+.sb-sec{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:var(--red2);margin:6px 0 3px;border-bottom:1px solid rgba(176,48,48,.25);padding-bottom:2px}
+.sb-entry{margin-bottom:4px;font-size:.68rem;color:var(--text2);line-height:1.4}
+.sb-entry i{font-style:italic;color:var(--text);font-weight:600}
 
-/* Round bar */
-.round-bar{
-  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
-  padding:10px 20px;background:var(--bg1);border-bottom:1px solid var(--border2);
-  gap:16px;flex-wrap:wrap;
-}
+/* ═══ CENTER — MAIN COMBAT ═══ */
+.main-panel{display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.round-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:9px 16px;background:var(--bg1);border-bottom:1px solid var(--border2);gap:12px;flex-wrap:wrap}
 .round-block{text-align:center}
-.round-lbl{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text3);margin-bottom:1px}
-.round-val{font-family:'Cinzel Decorative',serif;font-size:1.8rem;color:var(--gold2);line-height:1;text-shadow:0 0 16px rgba(196,136,42,.35)}
-.active-info{text-align:center;flex:1}
-.active-lbl{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text3);margin-bottom:1px}
-.active-name-val{font-family:'Cinzel',serif;font-size:.95rem;color:var(--text);font-weight:600}
-.round-btns{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.round-lbl{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text3);margin-bottom:1px}
+.round-val{font-family:'Cinzel Decorative',serif;font-size:1.7rem;color:var(--gold2);line-height:1;text-shadow:0 0 18px rgba(196,136,42,.4)}
+.active-info{text-align:center;flex:1;min-width:80px}
+.active-lbl{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text3);margin-bottom:1px}
+.active-name-val{font-family:'Cinzel',serif;font-size:.9rem;color:var(--text);font-weight:600}
+.round-btns{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 
-/* Drop overlay on combat list */
+/* Combat scroll — THE FIX: proper overflow + padding-bottom for breathing room */
 .combat-scroll{
-  flex:1;overflow-y:auto;padding:14px 16px 80px;
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:12px 14px 100px;
   scroll-behavior:smooth;
+  min-height:0;
 }
 .combat-scroll::-webkit-scrollbar{width:4px}
 .combat-scroll::-webkit-scrollbar-track{background:transparent}
 .combat-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.combat-dropzone{
-  border:2px dashed var(--border2);border-radius:var(--r);
-  padding:20px;text-align:center;margin-bottom:12px;
-  font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--text4);transition:all .2s;
-  display:none;
-}
+.combat-dropzone{border:2px dashed var(--border2);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:10px;font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text4);transition:all .2s;display:none}
 .combat-dropzone.visible{display:block}
 .combat-dropzone.drag-over{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
-
-/* List header */
-.list-header{
-  display:grid;grid-template-columns:50px 70px 1fr 110px 60px 1fr 90px;
-  gap:8px;padding:5px 13px;
-  font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--text4);border-bottom:1px solid var(--border);margin-bottom:8px;
-}
-
-/* Combatant rows */
+.list-hdr{display:grid;grid-template-columns:46px 66px 1fr 100px 54px 1fr 82px;gap:7px;padding:4px 11px;font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text4);border-bottom:1px solid var(--border);margin-bottom:7px;flex-shrink:0}
 .combatant-list{display:flex;flex-direction:column;gap:5px}
+
+/* Combatant row */
 .c-row{
-  display:grid;grid-template-columns:50px 70px 1fr 110px 60px 1fr 90px;
-  gap:8px;align-items:center;
-  padding:10px 13px;
+  display:grid;grid-template-columns:46px 66px 1fr 100px 54px 1fr 82px;
+  gap:7px;align-items:center;padding:9px 11px;
   background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
   border-left:3px solid transparent;
-  transition:all .18s;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+  animation:slideIn .22s ease;
+  position:relative;
 }
 .c-row:hover{border-color:var(--border2);background:var(--bg3)}
-.c-row.active-turn{
-  border-left-color:var(--gold);background:linear-gradient(90deg,rgba(196,136,42,.05),var(--bg3));
-  box-shadow:0 2px 12px rgba(0,0,0,.4);
-}
+.c-row.active-turn{border-left-color:var(--gold);background:linear-gradient(90deg,rgba(196,136,42,.07),var(--bg3));box-shadow:0 0 0 1px rgba(196,136,42,.1),0 2px 16px rgba(0,0,0,.5)}
 .c-row.t-player{border-left-color:var(--blue2)}
-.c-row.t-player.active-turn{border-left-color:var(--blue2);background:linear-gradient(90deg,var(--blue-bg),var(--bg3))}
+.c-row.t-player.active-turn{border-left-color:#50a0e8;background:linear-gradient(90deg,rgba(40,112,176,.08),var(--bg3));box-shadow:0 0 0 1px rgba(40,112,176,.12),0 2px 16px rgba(0,0,0,.5)}
 .c-row.t-enemy{border-left-color:var(--red2)}
-.c-row.t-enemy.active-turn{border-left-color:var(--red3);background:linear-gradient(90deg,var(--red-bg),var(--bg3))}
-.c-row.dead{opacity:.35}
+.c-row.t-enemy.active-turn{border-left-color:var(--red3);background:linear-gradient(90deg,rgba(176,48,48,.08),var(--bg3));box-shadow:0 0 0 1px rgba(176,48,48,.12),0 2px 16px rgba(0,0,0,.5)}
+.c-row.dead{opacity:.28}
+.c-row.pulse{animation:rowPulse .5s ease}
+@keyframes rowPulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 4px rgba(196,136,42,.25)}}
 
-.init-val{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--gold2);text-align:center}
-.type-pill{
-  font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;
-  padding:2px 7px;border-radius:20px;text-align:center;font-weight:600;
-}
+.init-val{font-family:'Cinzel',serif;font-size:1.15rem;font-weight:700;color:var(--gold2);text-align:center}
+.type-pill{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:20px;text-align:center;font-weight:600;white-space:nowrap}
 .type-pill.player{background:var(--blue-bg);color:var(--blue2);border:1px solid rgba(40,112,176,.3)}
-.type-pill.enemy{background:var(--red-bg);color:var(--red3);border:1px solid rgba(127, 4, 4, 0.4)}
+.type-pill.enemy{background:var(--red-bg);color:var(--red3);border:1px solid rgba(122,21,21,.4)}
 .type-pill.neutral{background:var(--gold-bg);color:var(--gold2);border:1px solid rgba(196,136,42,.3)}
-.c-name{font-family:'Cinzel',serif;font-size:.85rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.c-sub{font-size:.72rem;color:var(--text3);font-style:italic;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* HP cell */
+.c-name{font-family:'Cinzel',serif;font-size:.8rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-sub{font-size:.67rem;color:var(--text3);font-style:italic;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hp-cell{display:flex;flex-direction:column;gap:3px}
-.hp-nums{
-  font-family:'Cinzel',serif;font-size:.88rem;color:var(--text);
-  cursor:pointer;transition:color .15s;white-space:nowrap;
-}
+.hp-nums{font-family:'Cinzel',serif;font-size:.84rem;color:var(--text);cursor:pointer;transition:color .15s;white-space:nowrap}
 .hp-nums:hover{color:var(--gold)}
 .hp-track{height:4px;background:var(--bg0);border-radius:2px;overflow:hidden}
-.hp-fill{height:100%;border-radius:2px;transition:width .3s,background .3s}
-
-/* AC cell */
+.hp-fill{height:100%;border-radius:2px;transition:width .4s,background .4s}
 .ac-cell{text-align:center}
-.ac-num{font-family:'Cinzel',serif;font-size:.95rem;font-weight:600;color:var(--text2)}
-.ac-lbl{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase}
-
-/* Conditions cell */
-.cond-cell{display:flex;flex-wrap:wrap;gap:3px;align-items:center;min-height:22px}
-.cond-tag{
-  font-family:'Cinzel',serif;font-size:.48rem;padding:2px 5px;
-  border-radius:3px;background:var(--gold-bg);border:1px solid var(--gold-dim);
-  color:var(--gold2);cursor:pointer;transition:all .15s;white-space:nowrap;
-}
+.ac-num{font-family:'Cinzel',serif;font-size:.9rem;font-weight:600;color:var(--text2)}
+.ac-lbl{font-family:'Cinzel',serif;font-size:.39rem;letter-spacing:.15em;color:var(--text3);text-transform:uppercase}
+.cond-cell{display:flex;flex-wrap:wrap;gap:3px;align-items:center;min-height:18px}
+.cond-tag{font-family:'Cinzel',serif;font-size:.44rem;padding:2px 5px;border-radius:3px;background:var(--gold-bg);border:1px solid var(--gold-dim);color:var(--gold2);cursor:pointer;transition:all .15s;white-space:nowrap}
 .cond-tag:hover{background:var(--red-bg);border-color:var(--red);color:var(--red3)}
-.cond-add{
-  font-family:'Cinzel',serif;font-size:.48rem;padding:2px 6px;
-  border-radius:3px;background:transparent;border:1px dashed var(--border2);
-  color:var(--text3);cursor:pointer;transition:all .15s;
-}
+.cond-add{font-family:'Cinzel',serif;font-size:.44rem;padding:2px 5px;border-radius:3px;background:transparent;border:1px dashed var(--border2);color:var(--text3);cursor:pointer;transition:all .15s}
 .cond-add:hover{border-color:var(--gold-dim);color:var(--gold)}
+.row-acts{display:flex;gap:2px;justify-content:flex-end;align-items:center}
 
-/* Row actions */
-.row-acts{display:flex;gap:3px;justify-content:flex-end;align-items:center}
-
-/* Empty state */
-.empty{text-align:center;padding:40px 20px;color:var(--text3);font-style:italic}
-.empty .ico{font-size:2rem;opacity:.3;margin-bottom:10px}
-
-/* ═══════════════════════════════════════════════════════
-   RIGHT — ADD / NOTES PANEL
-══════════════════════════════════════════════════════ */
-.add-panel{
-  background:var(--bg1);border-left:1px solid var(--border);
-  display:flex;flex-direction:column;overflow:hidden;
+/* ── Inline stat peek panel ── */
+.stat-peek{
+  display:none;grid-column:1/-1;
+  background:var(--bg1);border:1px solid var(--border2);border-radius:4px;
+  padding:10px 12px;margin-top:4px;
+  animation:peekIn .2s ease;
+  max-height:260px;overflow-y:auto;
 }
-.add-panel-scroll{flex:1;overflow-y:auto;padding:14px}
-.add-panel-scroll::-webkit-scrollbar{width:3px}
-.add-panel-scroll::-webkit-scrollbar-track{background:var(--bg0)}
-.add-panel-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.panel-section{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.panel-section::before{content:'◆';font-size:.5rem;opacity:.7}
+.stat-peek::-webkit-scrollbar{width:3px}
+.stat-peek::-webkit-scrollbar-track{background:transparent}
+.stat-peek::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.stat-peek.open{display:block}
+@keyframes peekIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.peek-name{font-family:'Cinzel',serif;font-size:.8rem;font-weight:700;color:var(--gold2);margin-bottom:2px}
+.peek-meta{font-size:.7rem;color:var(--text3);font-style:italic;margin-bottom:6px}
+.peek-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px}
+.peek-stat{background:var(--bg0);border:1px solid var(--border);border-radius:3px;padding:4px 8px;text-align:center;min-width:48px}
+.peek-stat-l{font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.12em;color:var(--text3);text-transform:uppercase}
+.peek-stat-v{font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;color:var(--text)}
+.peek-stat-m{font-size:.6rem;color:var(--gold)}
+.peek-prop{font-size:.7rem;color:var(--text2);margin-bottom:2px}
+.peek-prop b{font-family:'Cinzel',serif;font-size:.58rem;color:var(--gold);margin-right:3px}
+.peek-section{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.22em;text-transform:uppercase;color:var(--red2);margin:6px 0 3px;border-bottom:1px solid rgba(176,48,48,.2);padding-bottom:2px}
+.peek-entry{font-size:.7rem;color:var(--text2);margin-bottom:3px;line-height:1.45}
+.peek-entry i{font-style:italic;color:var(--text);font-weight:600}
+.peek-note{font-size:.68rem;color:var(--text3);font-style:italic;margin-top:4px;padding-top:4px;border-top:1px solid var(--border)}
 
-/* Mini calculator */
-.calc-display{
-  background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);
-  padding:8px 11px;margin-bottom:8px;
-  font-family:'Cinzel',serif;font-size:1.2rem;color:var(--gold2);
-  text-align:right;min-height:40px;word-break:break-all;
-  cursor:text;
-}
-.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:14px}
-.calc-btn{
-  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
-  padding:8px 4px;text-align:center;font-family:'Cinzel',serif;
-  font-size:.75rem;color:var(--text2);cursor:pointer;transition:all .15s;
-}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-style:italic;line-height:1.8}
+.empty .ico{font-size:2rem;opacity:.25;margin-bottom:10px}
+
+/* ═══ RIGHT — ADD PANEL ═══ */
+.add-panel{background:var(--bg1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.add-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;min-height:0}
+.add-scroll::-webkit-scrollbar{width:3px}
+.add-scroll::-webkit-scrollbar-track{background:transparent}
+.add-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.psec{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.psec::before{content:'◆';font-size:.46rem;opacity:.7}
+
+/* Calc */
+.calc-display{background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;margin-bottom:6px;font-family:'Cinzel',serif;font-size:1.15rem;color:var(--gold2);text-align:right;min-height:38px;word-break:break-all}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:12px}
+.calc-btn{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:7px 3px;text-align:center;font-family:'Cinzel',serif;font-size:.73rem;color:var(--text2);cursor:pointer;transition:all .14s}
 .calc-btn:hover{background:var(--bg3);color:var(--text);border-color:var(--border2)}
-.calc-btn:active{transform:scale(.95)}
+.calc-btn:active{transform:scale(.93)}
 .calc-btn.op{color:var(--gold);border-color:var(--border2)}
 .calc-btn.op:hover{background:var(--gold-bg)}
 .calc-btn.eq{background:var(--gold-dim);border-color:var(--gold);color:var(--gold3);font-weight:700}
-.calc-btn.eq:hover{background:var(--gold)}
+.calc-btn.eq:hover{background:var(--gold);color:var(--bg0)}
 .calc-btn.clr{color:var(--red3);border-color:rgba(122,21,21,.4)}
 .calc-btn.clr:hover{background:var(--red-bg)}
 .calc-btn.span2{grid-column:span 2}
+.notes-area{background:var(--bg0);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:'Crimson Pro',serif;font-size:.88rem;padding:8px 10px;resize:vertical;min-height:70px;width:100%;line-height:1.6}
+.notes-area:focus{border-color:var(--gold-dim);outline:none;box-shadow:0 0 0 2px rgba(196,136,42,.08)}
 
-/* ═══════════════════════════════════════════════════════
-   BUTTONS
-══════════════════════════════════════════════════════ */
-.btn{
-  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;
-  padding:7px 16px;border:1px solid;border-radius:3px;cursor:pointer;
-  transition:all .18s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
-}
+/* ═══ BUTTONS ═══ */
+.btn{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;padding:6px 14px;border:1px solid;border-radius:3px;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .btn-gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold3);font-weight:600}
-.btn-gold:hover{background:var(--gold);color:var(--bg0);box-shadow:0 2px 10px rgba(196,136,42,.3)}
+.btn-gold:hover{background:var(--gold);color:var(--bg0);box-shadow:0 2px 12px rgba(196,136,42,.4)}
 .btn-ghost{background:transparent;border-color:var(--border2);color:var(--text2)}
 .btn-ghost:hover{background:var(--bg3);color:var(--text);border-color:var(--border3)}
 .btn-danger{background:transparent;border-color:rgba(122,21,21,.5);color:var(--red3)}
 .btn-danger:hover{background:var(--red-bg);border-color:var(--red2)}
-.btn-next{
-  background:linear-gradient(135deg,var(--red),var(--red2));
-  border:1px solid var(--red3);color:#fff;font-weight:600;
-  padding:9px 22px;
-}
-.btn-next:hover{box-shadow:0 2px 14px rgba(176,48,48,.4);filter:brightness(1.1)}
-.btn-sm{padding:4px 10px;font-size:.54rem}
-.btn-ico{padding:5px 8px;font-size:.85rem}
-.btn-success{background:var(--green);border-color:var(--green2);color:var(--green3)}
-.btn-success:hover{background:var(--green2);color:#fff}
+.btn-next{background:linear-gradient(135deg,var(--red),var(--red2));border:1px solid var(--red3);color:#fff;font-weight:600;padding:8px 18px;position:relative;overflow:hidden}
+.btn-next::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.08));pointer-events:none}
+.btn-next:hover{box-shadow:0 2px 18px rgba(176,48,48,.5);filter:brightness(1.12)}
+.btn-sm{padding:3px 9px;font-size:.5rem}
+.btn-ico{padding:4px 7px;font-size:.82rem}
 
-/* ═══════════════════════════════════════════════════════
-   INPUTS
-══════════════════════════════════════════════════════ */
-input,select,textarea{
-  background:var(--bg0);border:1px solid var(--border);border-radius:3px;
-  color:var(--text);font-family:'Crimson Pro',serif;font-size:.95rem;
-  padding:7px 10px;outline:none;transition:border-color .18s,box-shadow .18s;width:100%;
-}
+/* ═══ INPUTS ═══ */
+input,select,textarea{background:var(--bg0);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:'Crimson Pro',serif;font-size:.93rem;padding:6px 9px;outline:none;transition:border-color .18s,box-shadow .18s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--gold-dim);box-shadow:0 0 0 2px rgba(196,136,42,.1)}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-label{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px}
-.field{margin-bottom:10px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+label{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px}
+.field{margin-bottom:9px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
 select option{background:var(--bg2)}
 
-/* ═══════════════════════════════════════════════════════
-   MODALS
-══════════════════════════════════════════════════════ */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.75);
-  display:flex;align-items:center;justify-content:center;
-  z-index:200;backdrop-filter:blur(4px);
-  opacity:0;pointer-events:none;transition:opacity .2s;padding:20px;
-}
+/* ═══ MODALS ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:400;backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .22s;padding:18px}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{
-  background:var(--bg2);border:1px solid var(--border3);border-radius:6px;
-  padding:24px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;
-  box-shadow:var(--shadow2);transform:translateY(10px) scale(.99);transition:transform .2s;
-}
+.modal{background:var(--bg2);border:1px solid var(--border3);border-radius:6px;padding:20px;max-width:540px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--sh2);transform:translateY(14px) scale(.99);transition:transform .22s}
 .modal-overlay.open .modal{transform:translateY(0) scale(1)}
 .modal-lg .modal{max-width:680px}
-.modal-title{
-  font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;color:var(--gold2);
-  margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);
-}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.modal-title{font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;color:var(--gold2);margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.modal-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:15px;padding-top:12px;border-top:1px solid var(--border)}
 .modal::-webkit-scrollbar{width:4px}
 .modal::-webkit-scrollbar-track{background:var(--bg0)}
 .modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.msec{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text3);margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.msec::before{content:'◆';font-size:.42rem;opacity:.6}
 
-/* ─── HP modal quick btns */
-.hp-quick{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.hp-qb{
-  font-family:'Cinzel',serif;font-size:.6rem;padding:6px 12px;border-radius:3px;
-  border:1px solid var(--border);background:var(--bg1);color:var(--text2);cursor:pointer;transition:all .15s;
-}
+/* HP modal */
+.hp-quick{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.hp-qb{font-family:'Cinzel',serif;font-size:.57rem;padding:5px 10px;border-radius:3px;border:1px solid var(--border);background:var(--bg1);color:var(--text2);cursor:pointer;transition:all .15s}
 .hp-qb.dmg{border-color:rgba(122,21,21,.4);color:var(--red3)}
 .hp-qb.dmg:hover{background:var(--red-bg);border-color:var(--red2)}
-.hp-qb.heal{border-color:rgba(26,94,58,.4);color:var(--green3)}
+.hp-qb.heal{border-color:rgba(24,90,56,.4);color:var(--green3)}
 .hp-qb.heal:hover{background:var(--green-bg);border-color:var(--green2)}
 
-/* ─── Conditions modal */
+/* Conditions */
 .cond-picker{display:flex;flex-wrap:wrap;gap:5px}
-.cond-toggle{
-  font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.08em;
-  padding:5px 11px;border-radius:3px;border:1px solid var(--border);
-  background:var(--bg1);color:var(--text3);cursor:pointer;transition:all .15s;
-}
+.cond-toggle{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.08em;padding:5px 10px;border-radius:3px;border:1px solid var(--border);background:var(--bg1);color:var(--text3);cursor:pointer;transition:all .15s}
 .cond-toggle.on{background:var(--gold-bg);border-color:var(--gold-dim);color:var(--gold2);font-weight:600}
 .cond-toggle:hover{border-color:var(--border2);color:var(--text)}
 
-/* ─── Traits modal */
-.trait-list{display:flex;flex-direction:column;gap:5px}
-.trait-item{
-  display:flex;align-items:flex-start;gap:8px;padding:9px 12px;
-  background:var(--bg1);border:1px solid var(--border);border-left:2px solid var(--gold-dim);border-radius:3px;
-}
-.trait-name{font-family:'Cinzel',serif;font-size:.68rem;color:var(--gold)}
-.trait-desc{font-size:.82rem;color:var(--text2);margin-top:1px;font-style:italic}
-.trait-rm{margin-left:auto;color:var(--text3);cursor:pointer;font-size:.7rem;flex-shrink:0;transition:color .15s}
-.trait-rm:hover{color:var(--red3)}
+/* Traits modal */
+.trait-list-m{display:flex;flex-direction:column;gap:4px}
+.trait-item-m{display:flex;align-items:flex-start;gap:7px;padding:8px 10px;background:var(--bg1);border:1px solid var(--border);border-left:2px solid var(--gold-dim);border-radius:3px}
+.t-nm{font-family:'Cinzel',serif;font-size:.64rem;color:var(--gold)}
+.t-ds{font-size:.78rem;color:var(--text2);margin-top:1px;font-style:italic}
+.t-rm{margin-left:auto;color:var(--text3);cursor:pointer;font-size:.66rem;flex-shrink:0;transition:color .15s}
+.t-rm:hover{color:var(--red3)}
 
-/* ─── Initiative input modal */
-.init-modal-card{
-  background:var(--bg1);border:1px solid var(--border2);border-radius:var(--r);
-  padding:16px;margin-bottom:16px;
-}
-.init-modal-cname{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold2);margin-bottom:4px}
-.init-modal-stats{font-size:.82rem;color:var(--text3);font-style:italic}
+/* Initiative modal */
+.init-card{background:var(--bg1);border:1px solid var(--border2);border-radius:var(--r);padding:13px;margin-bottom:13px}
+.init-cname{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold2);margin-bottom:3px}
+.init-stats{font-size:.78rem;color:var(--text3);font-style:italic}
 
-/* ─── Enemy maker modal */
-.section-sep{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text3);margin:14px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.section-sep::before{content:'◆';font-size:.45rem;opacity:.6}
+/* Enemy maker lists */
+.em-list{display:flex;flex-direction:column;gap:4px;margin-bottom:5px;max-height:150px;overflow-y:auto}
+.em-list::-webkit-scrollbar{width:3px}
+.em-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.em-item{display:flex;gap:6px;align-items:flex-start}
+.em-item input{flex:0 0 120px;font-size:.86rem}
+.em-item textarea{flex:1;min-height:36px;resize:vertical;font-size:.84rem}
+.em-item-rm{font-size:.68rem;color:var(--text3);cursor:pointer;padding:5px;transition:color .15s;flex-shrink:0}
+.em-item-rm:hover{color:var(--red3)}
+.em-add-row{display:flex;gap:5px;align-items:flex-start}
+.em-add-row input{flex:0 0 120px;font-size:.86rem}
+.em-add-row textarea{flex:1;min-height:34px;resize:vertical;font-size:.84rem}
+.em-add-btn{font-family:'Cinzel',serif;font-size:.5rem;padding:5px 9px;border:1px solid var(--border);background:var(--bg1);color:var(--text3);border-radius:3px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.em-add-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
 
-/* ═══════════════════════════════════════════════════════
-   CHARACTERS TAB
-══════════════════════════════════════════════════════ */
-.char-layout{flex:1;overflow-y:auto;padding:20px 24px 40px;background:var(--bg0)}
+/* ═══ CHARACTERS TAB ═══ */
+.char-layout{flex:1;overflow-y:auto;padding:16px 20px 40px;background:var(--bg0);min-height:0}
 .char-layout::-webkit-scrollbar{width:5px}
-.char-layout::-webkit-scrollbar-track{background:var(--bg0)}
 .char-layout::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
-.char-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
-  overflow:hidden;transition:border-color .18s,box-shadow .18s;
-}
-.char-card:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
-.char-hdr{
-  background:linear-gradient(135deg,rgba(196,136,42,.08),transparent);
-  border-bottom:1px solid var(--border);padding:14px 16px;
-  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
-}
-.char-name{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;color:var(--gold2)}
-.char-meta{font-size:.78rem;color:var(--text3);font-style:italic;margin-top:2px}
-.char-lvl{font-family:'Cinzel',serif;font-size:.65rem;background:var(--gold-dim);color:var(--gold3);padding:2px 9px;border-radius:20px;font-weight:600;flex-shrink:0}
-.char-body{padding:14px 16px}
-.stat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:12px}
-.stat-box{background:var(--bg1);border:1px solid var(--border);border-radius:4px;padding:7px 3px;text-align:center}
-.stat-box label{font-size:.46rem;letter-spacing:.1em;color:var(--text3);margin-bottom:2px}
-.stat-score{font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--text)}
-.stat-mod{font-size:.65rem;color:var(--gold);font-weight:600}
-.core-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
-.core-box{background:var(--bg1);border:1px solid var(--border);border-radius:4px;padding:8px 5px;text-align:center}
-.core-lbl{font-family:'Cinzel',serif;font-size:.47rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
-.core-val{font-family:'Cinzel',serif;font-size:1.15rem;font-weight:700;color:var(--text);margin-top:1px}
-.chip-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-.chip{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.08em;padding:2px 8px;border-radius:20px;border:1px solid;white-space:nowrap}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:13px}
+.char-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:border-color .18s,box-shadow .18s}
+.char-card:hover{border-color:var(--border2);box-shadow:0 4px 22px rgba(0,0,0,.45)}
+.char-hdr{background:linear-gradient(135deg,rgba(196,136,42,.08),transparent);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:7px}
+.char-name{font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;color:var(--gold2)}
+.char-meta{font-size:.74rem;color:var(--text3);font-style:italic;margin-top:2px}
+.char-lvl{font-family:'Cinzel',serif;font-size:.6rem;background:var(--gold-dim);color:var(--gold3);padding:2px 8px;border-radius:20px;font-weight:600;flex-shrink:0}
+.char-body{padding:12px 14px}
+.stat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:10px}
+.stat-box{background:var(--bg1);border:1px solid var(--border);border-radius:4px;padding:6px 2px;text-align:center}
+.stat-box label{font-size:.42rem;letter-spacing:.1em;color:var(--text3);margin-bottom:2px}
+.stat-score{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;color:var(--text)}
+.stat-mod{font-size:.6rem;color:var(--gold);font-weight:600}
+.core-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px}
+.core-box{background:var(--bg1);border:1px solid var(--border);border-radius:4px;padding:7px 4px;text-align:center}
+.core-lbl{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+.core-val{font-family:'Cinzel',serif;font-size:1.08rem;font-weight:700;color:var(--text);margin-top:1px}
+.chip-row{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}
+.chip{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.08em;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap}
 .chip-gold{background:var(--gold-bg);color:var(--gold2);border-color:rgba(196,136,42,.3)}
-.chip-jade{background:var(--green-bg);color:var(--green3);border-color:rgba(26,94,58,.35)}
-.chip-blue{background:var(--blue-bg);color:var(--blue2);border-color:rgba(26,58,106,.35)}
-.feat-list{display:flex;flex-direction:column;gap:3px;margin-top:8px}
-.feat-item{font-size:.8rem;color:var(--text2);padding:5px 9px;background:var(--bg1);border-radius:3px;border-left:2px solid var(--gold-dim)}
-.feat-item b{font-family:'Cinzel',serif;font-size:.58rem;color:var(--gold);margin-right:4px}
-.char-hdr-btns{display:flex;gap:4px}
+.chip-jade{background:var(--green-bg);color:var(--green3);border-color:rgba(24,90,56,.35)}
+.chip-blue{background:var(--blue-bg);color:var(--blue2);border-color:rgba(26,56,104,.35)}
+.feat-list{display:flex;flex-direction:column;gap:3px;margin-top:7px}
+.feat-item{font-size:.76rem;color:var(--text2);padding:4px 8px;background:var(--bg1);border-radius:3px;border-left:2px solid var(--gold-dim)}
+.feat-item b{font-family:'Cinzel',serif;font-size:.55rem;color:var(--gold);margin-right:4px}
 
-/* ═══════════════════════════════════════════════════════
-   DRAG & DROP GHOST
-══════════════════════════════════════════════════════ */
-.drag-ghost{
-  position:fixed;pointer-events:none;z-index:999;
-  background:var(--bg3);border:1px solid var(--gold);border-radius:var(--r);
-  padding:10px 12px;min-width:160px;
-  box-shadow:0 8px 24px rgba(0,0,0,.7);opacity:.9;
-  font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold2);font-weight:600;
-  transform:rotate(-3deg);
-  transition:none;
+/* Char peek in combat list */
+.char-peek{
+  display:none;grid-column:1/-1;
+  background:var(--bg1);border:1px solid var(--border2);border-radius:4px;
+  padding:10px 12px;margin-top:4px;animation:peekIn .2s ease;
 }
+.char-peek.open{display:block}
 
-/* ═══════════════════════════════════════════════════════
-   NOTES AREA
-══════════════════════════════════════════════════════ */
-.notes-area{
-  background:var(--bg0);border:1px solid var(--border);border-radius:3px;
-  color:var(--text);font-family:'Crimson Pro',serif;font-size:.9rem;
-  padding:9px 11px;resize:vertical;min-height:80px;width:100%;line-height:1.6;
-}
-.notes-area:focus{border-color:var(--gold-dim);outline:none;box-shadow:0 0 0 2px rgba(196,136,42,.08)}
-
-/* ═══════════════════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════════════════ */
-#toast{
-  position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-60px);
-  background:var(--bg3);border:1px solid var(--gold-dim);border-radius:20px;
-  padding:8px 20px;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;
-  color:var(--gold);z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;
-  box-shadow:var(--shadow);
-}
+/* ═══ DRAG GHOST, TOAST, FX ═══ */
+.drag-ghost{position:fixed;pointer-events:none;z-index:999;background:var(--bg3);border:1px solid var(--gold);border-radius:var(--r);padding:8px 11px;min-width:140px;box-shadow:var(--sh2);opacity:.93;font-family:'Cinzel',serif;font-size:.74rem;color:var(--gold2);font-weight:600;transform:rotate(-3deg)}
+#toast{position:fixed;top:13px;left:50%;transform:translateX(-50%) translateY(-60px);background:var(--bg3);border:1px solid var(--gold-dim);border-radius:20px;padding:7px 18px;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;color:var(--gold);z-index:700;transition:transform .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--sh)}
 #toast.show{transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:var(--red2);color:var(--red3)}
 
-/* ═══════════════════════════════════════════════════════
-   ANIMATIONS
-══════════════════════════════════════════════════════ */
 @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.c-row{animation:slideIn .2s ease}
-@keyframes popIn{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+@keyframes popIn{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
 .pop{animation:popIn .25s ease-out}
+@keyframes deploySlide{0%{transform:translateX(-24px) scale(.96);opacity:0}100%{transform:translateX(0) scale(1);opacity:1}}
+.just-deployed{animation:deploySlide .32s cubic-bezier(.2,1.1,.3,1)}
 </style>
 </head>
 <body>
+<canvas id="fx-canvas"></canvas>
+<div id="turn-banner"></div>
 
-<!-- ═══════════════════════════ HEADER -->
-<header class="header">
+<header class="hdr">
   <div class="brand">
-    <div class="brand-title">✦ Veilara</div>
-    <div class="brand-sub">Combat Tracker · 5e Homebrew</div>
+    <div class="brand-t">✦ Veilara</div>
+    <div class="brand-s">Combat Tracker · 5e Homebrew</div>
   </div>
-  <nav class="nav-tabs">
-    <button class="nav-tab active" data-tab="combat">⚔ Combat</button>
-    <button class="nav-tab" data-tab="characters">📜 Characters</button>
-  </nav>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="hdr-sound on" id="sound-toggle" onclick="toggleSound()" title="Toggle sound effects">🔔</button>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="combat">⚔ Combat</button>
+      <button class="nav-tab" data-tab="characters">📜 Characters</button>
+    </nav>
+  </div>
 </header>
 
-<!-- ═══════════════════════════ APP BODY -->
 <div class="app-body">
 
-  <!-- ══════════════════ COMBAT TAB -->
+  <!-- ══ COMBAT TAB ══ -->
   <div class="tab-pane active" id="tab-combat">
     <div class="combat-layout">
 
       <!-- LEFT: ENEMY DECK -->
-      <aside class="deck-panel" id="deck-panel">
-        <div class="deck-header">
+      <aside class="deck-panel">
+        <div class="deck-hdr">
           <span class="deck-title">Enemy Deck</span>
           <button class="btn btn-ghost btn-sm" onclick="openEnemyMaker()">+ New</button>
         </div>
-        <div class="deck-scroll" id="deck-scroll">
-          <!-- cards rendered here -->
-        </div>
-        <!-- drop zone to remove from combat -->
-        <div class="deck-dropzone" id="deck-dropzone" ondragover="onDeckDragOver(event)" ondragleave="onDeckDragLeave(event)" ondrop="onDropToDeck(event)">
-          Drop here to remove from combat
+        <div class="deck-scroll" id="deck-scroll"></div>
+        <div class="deck-dropzone" id="deck-dropzone"
+          ondragover="onDeckDragOver(event)" ondragleave="onDeckDragLeave()" ondrop="onDropToDeck(event)">
+          Drop to remove
         </div>
       </aside>
 
-      <!-- CENTER: MAIN COMBAT -->
+      <!-- CENTER -->
       <main class="main-panel">
-        <!-- Round bar -->
         <div class="round-bar">
           <div class="round-block">
             <div class="round-lbl">Round</div>
@@ -538,31 +431,27 @@ select option{background:var(--bg2)}
             <button class="btn btn-ghost btn-sm" onclick="resetCombat()">↺ Reset</button>
           </div>
         </div>
-
-        <!-- Scroll area -->
         <div class="combat-scroll" id="combat-scroll"
-          ondragover="onCombatDragOver(event)" ondragleave="onCombatDragLeave(event)" ondrop="onDropToCombat(event)">
-
-          <div class="combat-dropzone" id="combat-dropzone">⚔ Drag an enemy card here to deploy</div>
-
-          <div class="list-header">
+          ondragover="onCombatDragOver(event)"
+          ondragleave="onCombatDragLeave(event)"
+          ondrop="onDropToCombat(event)">
+          <div class="combat-dropzone" id="combat-dropzone">⚔ Drag enemy here to deploy</div>
+          <div class="list-hdr">
             <div>Init</div><div>Type</div><div>Name</div>
-            <div>HP</div><div>AC</div><div>Conditions</div><div style="text-align:right">Actions</div>
+            <div>HP</div><div>AC</div><div>Conditions</div>
+            <div style="text-align:right">Actions</div>
           </div>
-
           <div class="combatant-list" id="combatant-list">
-            <div class="empty"><div class="ico">⚔</div>Drag an enemy card from the left,<br>or add a combatant using the form →</div>
+            <div class="empty"><div class="ico">⚔</div>Drag an enemy from the left,<br>or add one via the form →</div>
           </div>
         </div>
       </main>
 
       <!-- RIGHT: ADD + CALC + NOTES -->
       <aside class="add-panel">
-        <div class="add-panel-scroll">
-
-          <!-- Add combatant form -->
-          <div class="panel-section">Add Combatant</div>
-          <div class="field"><label>Name</label><input id="f-name" type="text" placeholder="Aldric Dawnmere"></div>
+        <div class="add-scroll">
+          <div class="psec">Add Combatant</div>
+          <div class="field"><label>Name</label><input id="f-name" placeholder="Aldric Dawnmere" onkeydown="if(event.key==='Enter')addCombatant()"></div>
           <div class="g2">
             <div class="field"><label>Type</label>
               <select id="f-type">
@@ -571,7 +460,8 @@ select option{background:var(--bg2)}
                 <option value="neutral">NPC</option>
               </select>
             </div>
-            <div class="field"><label>Initiative <button class="btn btn-ghost btn-sm" style="padding:2px 7px;font-size:.5rem;margin-left:4px;" onclick="rollInit()">🎲</button></label>
+            <div class="field">
+              <label>Initiative <button class="btn btn-ghost btn-sm" style="padding:2px 5px;font-size:.44rem;margin-left:3px" onclick="rollInit()">🎲</button></label>
               <input id="f-init" type="number" placeholder="14">
             </div>
           </div>
@@ -579,76 +469,68 @@ select option{background:var(--bg2)}
             <div class="field"><label>Max HP</label><input id="f-hp" type="number" placeholder="38"></div>
             <div class="field"><label>AC</label><input id="f-ac" type="number" placeholder="16"></div>
           </div>
-          <div class="field"><label>Linked Sheet</label>
-            <select id="f-linked"><option value="">— None —</option></select>
-          </div>
-          <div style="display:flex;gap:6px;margin-bottom:18px;">
-            <button class="btn btn-gold" style="flex:1;" onclick="addCombatant()">+ Add</button>
+          <div class="field"><label>Linked Sheet</label><select id="f-linked"><option value="">— None —</option></select></div>
+          <div style="display:flex;gap:5px;margin-bottom:15px">
+            <button class="btn btn-gold" style="flex:1" onclick="addCombatant()">+ Add</button>
             <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
           </div>
 
-          <!-- Calculator -->
-          <div class="panel-section">Calculator</div>
-          <div class="calc-display" id="calc-display" onclick="focusCalc()">0</div>
+          <div class="psec">Calculator</div>
+          <div class="calc-display" id="calc-display">0</div>
           <div class="calc-grid">
             <button class="calc-btn clr" onclick="calcClear()">C</button>
             <button class="calc-btn clr" onclick="calcDel()">⌫</button>
-            <button class="calc-btn op" onclick="calcInput('%')">%</button>
-            <button class="calc-btn op" onclick="calcInput('÷')">÷</button>
-            <button class="calc-btn" onclick="calcInput('7')">7</button>
-            <button class="calc-btn" onclick="calcInput('8')">8</button>
-            <button class="calc-btn" onclick="calcInput('9')">9</button>
-            <button class="calc-btn op" onclick="calcInput('×')">×</button>
-            <button class="calc-btn" onclick="calcInput('4')">4</button>
-            <button class="calc-btn" onclick="calcInput('5')">5</button>
-            <button class="calc-btn" onclick="calcInput('6')">6</button>
-            <button class="calc-btn op" onclick="calcInput('−')">−</button>
-            <button class="calc-btn" onclick="calcInput('1')">1</button>
-            <button class="calc-btn" onclick="calcInput('2')">2</button>
-            <button class="calc-btn" onclick="calcInput('3')">3</button>
-            <button class="calc-btn op" onclick="calcInput('+')">+</button>
-            <button class="calc-btn" onclick="calcInput('0')">0</button>
-            <button class="calc-btn" onclick="calcInput('.')">.</button>
-            <button class="calc-btn eq span2" onclick="calcEquals()">=</button>
+            <button class="calc-btn op" onclick="calcIn('%')">%</button>
+            <button class="calc-btn op" onclick="calcIn('÷')">÷</button>
+            <button class="calc-btn" onclick="calcIn('7')">7</button>
+            <button class="calc-btn" onclick="calcIn('8')">8</button>
+            <button class="calc-btn" onclick="calcIn('9')">9</button>
+            <button class="calc-btn op" onclick="calcIn('×')">×</button>
+            <button class="calc-btn" onclick="calcIn('4')">4</button>
+            <button class="calc-btn" onclick="calcIn('5')">5</button>
+            <button class="calc-btn" onclick="calcIn('6')">6</button>
+            <button class="calc-btn op" onclick="calcIn('−')">−</button>
+            <button class="calc-btn" onclick="calcIn('1')">1</button>
+            <button class="calc-btn" onclick="calcIn('2')">2</button>
+            <button class="calc-btn" onclick="calcIn('3')">3</button>
+            <button class="calc-btn op" onclick="calcIn('+')">+</button>
+            <button class="calc-btn" onclick="calcIn('0')">0</button>
+            <button class="calc-btn" onclick="calcIn('.')">.</button>
+            <button class="calc-btn eq span2" onclick="calcEq()">=</button>
           </div>
 
-          <!-- Battle notes -->
-          <div class="panel-section">Battle Notes</div>
-          <textarea class="notes-area" id="combat-notes" placeholder="Scene notes, hazards, ongoing spells…" rows="5"></textarea>
-
+          <div class="psec">Battle Notes</div>
+          <textarea class="notes-area" id="combat-notes" rows="5" placeholder="Scene notes, hazards, ongoing spells…"></textarea>
         </div>
       </aside>
-
-    </div>
-  </div><!-- /tab-combat -->
-
-  <!-- ══════════════════ CHARACTERS TAB -->
-  <div class="tab-pane" id="tab-characters">
-    <div class="char-layout">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);">◆ Character Roster</div>
-        <button class="btn btn-gold" onclick="openCharModal()">+ New Character</button>
-      </div>
-      <div class="char-grid" id="char-grid">
-        <div class="empty"><div class="ico">📜</div>No characters yet. Create one above!</div>
-      </div>
     </div>
   </div>
 
-</div><!-- /app-body -->
+  <!-- ══ CHARACTERS TAB ══ -->
+  <div class="tab-pane" id="tab-characters">
+    <div class="char-layout">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)">◆ Character Roster</div>
+        <button class="btn btn-gold" onclick="openCharModal()">+ New Character</button>
+      </div>
+      <div class="char-grid" id="char-grid">
+        <div class="empty"><div class="ico">📜</div>No characters yet.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- ═══════════════════ MODALS ═══════════════════ -->
-
-<!-- HP modal -->
+<!-- ════ MODALS ════ -->
+<!-- HP -->
 <div class="modal-overlay" id="hp-modal">
   <div class="modal">
     <div class="modal-title">❤ Adjust HP — <span id="hp-modal-name"></span></div>
-    <div class="g2" style="align-items:flex-end;gap:12px;margin-bottom:14px;">
+    <div class="g2" style="gap:11px;margin-bottom:12px;align-items:flex-end">
       <div class="field" style="margin-bottom:0"><label>Current HP</label><input id="hpm-cur" type="number"></div>
       <div class="field" style="margin-bottom:0"><label>Max HP</label><input id="hpm-max" type="number"></div>
     </div>
     <label style="margin-bottom:5px">Quick Damage</label>
-    <div class="hp-quick" style="margin-bottom:12px;">
+    <div class="hp-quick" style="margin-bottom:10px">
       <button class="hp-qb dmg" onclick="hpDelta(-1)">−1</button>
       <button class="hp-qb dmg" onclick="hpDelta(-3)">−3</button>
       <button class="hp-qb dmg" onclick="hpDelta(-5)">−5</button>
@@ -671,7 +553,7 @@ select option{background:var(--bg2)}
   </div>
 </div>
 
-<!-- Conditions modal -->
+<!-- Conditions -->
 <div class="modal-overlay" id="cond-modal">
   <div class="modal">
     <div class="modal-title">🩸 Conditions — <span id="cond-modal-name"></span></div>
@@ -680,34 +562,35 @@ select option{background:var(--bg2)}
   </div>
 </div>
 
-<!-- Traits modal -->
+<!-- Traits (combat) -->
 <div class="modal-overlay" id="traits-modal">
   <div class="modal">
     <div class="modal-title">⚡ Traits — <span id="traits-modal-name"></span></div>
-    <div class="trait-list" id="traits-list"></div>
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-      <div class="g2" style="margin-bottom:8px;">
+    <div class="trait-list-m" id="traits-list"></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+      <div class="g2" style="margin-bottom:7px">
         <div class="field" style="margin-bottom:0"><label>Name</label><input id="tm-name" placeholder="Legendary Resistance"></div>
-        <div class="field" style="margin-bottom:0"><label>Description</label><input id="tm-desc" placeholder="3/day choose to succeed"></div>
+        <div class="field" style="margin-bottom:0"><label>Desc</label><input id="tm-desc" placeholder="3/day choose to succeed"></div>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('traits-modal')">Close</button>
-      <button class="btn btn-gold" onclick="addTrait()">+ Add Trait</button>
+      <button class="btn btn-gold" onclick="addTrait()">+ Add</button>
     </div>
   </div>
 </div>
 
-<!-- Initiative input modal (when deploying from deck) -->
+<!-- Initiative deploy -->
 <div class="modal-overlay" id="init-modal">
-  <div class="modal" style="max-width:360px;">
-    <div class="modal-title">🎯 Set Initiative</div>
-    <div class="init-modal-card" id="init-modal-card"></div>
-    <div class="field"><label>Initiative Roll</label><input id="init-modal-val" type="number" placeholder="14"></div>
-    <div style="display:flex;gap:6px;margin-bottom:4px;">
-      <button class="btn btn-ghost btn-sm" onclick="rollInitModal()">🎲 Roll d20</button>
-      <button class="btn btn-ghost btn-sm" onclick="rollInitModal(2)">🎲 d20+2</button>
-      <button class="btn btn-ghost btn-sm" onclick="rollInitModal(4)">🎲 d20+4</button>
+  <div class="modal" style="max-width:350px">
+    <div class="modal-title">🎯 Deploy — Set Initiative</div>
+    <div class="init-card" id="init-card"></div>
+    <div class="field"><label>Initiative Roll</label><input id="init-val" type="number" placeholder="14" onkeydown="if(event.key==='Enter')confirmDeploy()"></div>
+    <div style="display:flex;gap:5px;margin-bottom:4px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="rollIM()">🎲 d20</button>
+      <button class="btn btn-ghost btn-sm" onclick="rollIM(2)">🎲 d20+2</button>
+      <button class="btn btn-ghost btn-sm" onclick="rollIM(4)">🎲 d20+4</button>
+      <button class="btn btn-ghost btn-sm" onclick="rollIM(5)">🎲 d20+5</button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('init-modal')">Cancel</button>
@@ -716,28 +599,27 @@ select option{background:var(--bg2)}
   </div>
 </div>
 
-<!-- Enemy maker modal -->
-<div class="modal-overlay" id="enemy-maker-modal">
-  <div class="modal">
+<!-- Enemy Maker -->
+<div class="modal-overlay modal-lg" id="em-modal" style="align-items:flex-start;overflow-y:auto">
+  <div class="modal" style="margin:14px auto">
     <div class="modal-title" id="em-title">New Enemy Template</div>
     <div class="g3" style="margin-bottom:0">
       <div class="field"><label>Name</label><input id="em-name" placeholder="Goblin"></div>
-      <div class="field"><label>Type</label>
-        <select id="em-type">
-          <option value="enemy">Enemy</option>
-          <option value="neutral">NPC</option>
-          <option value="boss">Boss</option>
-        </select>
-      </div>
-      <div class="field"><label>CR / Tier</label><input id="em-cr" placeholder="1/4"></div>
+      <div class="field"><label>Type</label><select id="em-type"><option value="enemy">Enemy</option><option value="neutral">NPC</option><option value="boss">Boss</option></select></div>
+      <div class="field"><label>CR</label><input id="em-cr" placeholder="1/4"></div>
+    </div>
+    <div class="g3" style="margin-bottom:0">
+      <div class="field"><label>Size</label><input id="em-size" placeholder="Medium"></div>
+      <div class="field"><label>Type Tag</label><input id="em-typetag" placeholder="humanoid (goblinoid)"></div>
+      <div class="field"><label>Alignment</label><input id="em-align" placeholder="neutral evil"></div>
     </div>
     <div class="g3" style="margin-bottom:0">
       <div class="field"><label>Max HP</label><input id="em-hp" type="number" placeholder="7"></div>
       <div class="field"><label>AC</label><input id="em-ac" type="number" placeholder="15"></div>
-      <div class="field"><label>Speed</label><input id="em-speed" type="number" placeholder="30"></div>
+      <div class="field"><label>Speed</label><input id="em-speed" placeholder="30 ft."></div>
     </div>
-    <div class="section-sep">Ability Scores</div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px">
+    <div class="msec">Ability Scores</div>
+    <div class="g6" style="margin-bottom:9px">
       <div class="field"><label>STR</label><input id="em-str" type="number" placeholder="8"></div>
       <div class="field"><label>DEX</label><input id="em-dex" type="number" placeholder="14"></div>
       <div class="field"><label>CON</label><input id="em-con" type="number" placeholder="10"></div>
@@ -745,96 +627,205 @@ select option{background:var(--bg2)}
       <div class="field"><label>WIS</label><input id="em-wis" type="number" placeholder="8"></div>
       <div class="field"><label>CHA</label><input id="em-cha" type="number" placeholder="8"></div>
     </div>
-    <div class="field"><label>Traits (Name: Desc, comma-sep)</label><input id="em-traits" placeholder="Pack Tactics: Adv when ally adjacent, Nimble Escape: Disengage as bonus"></div>
-    <div class="field"><label>Notes</label><textarea id="em-notes" class="notes-area" rows="2" placeholder="Immunities, resistances, special notes…"></textarea></div>
+    <div class="msec">Defenses & Senses</div>
+    <div class="g2" style="margin-bottom:0"><div class="field"><label>Skills</label><input id="em-skills" placeholder="Stealth +6"></div><div class="field"><label>Damage Immunities</label><input id="em-immun" placeholder="Acid"></div></div>
+    <div class="g2" style="margin-bottom:0"><div class="field"><label>Condition Immunities</label><input id="em-condimmun" placeholder="Prone"></div><div class="field"><label>Resistances</label><input id="em-resist" placeholder="Bludgeoning"></div></div>
+    <div class="g2" style="margin-bottom:0"><div class="field"><label>Senses</label><input id="em-senses" placeholder="Darkvision 60 ft., PP 11"></div><div class="field"><label>Languages</label><input id="em-lang" placeholder="Common"></div></div>
+    <div class="msec">Traits</div>
+    <div class="em-list" id="em-traits-list"></div>
+    <div class="em-add-row"><input id="em-trait-name" placeholder="Trait name"><textarea id="em-trait-desc" class="notes-area" placeholder="Description…" style="min-height:34px;font-size:.86rem"></textarea><button class="em-add-btn" onclick="emAdd('traits')">+ Add</button></div>
+    <div class="msec">Actions</div>
+    <div class="em-list" id="em-actions-list"></div>
+    <div class="em-add-row"><input id="em-action-name" placeholder="Action name"><textarea id="em-action-desc" class="notes-area" placeholder="Description…" style="min-height:34px;font-size:.86rem"></textarea><button class="em-add-btn" onclick="emAdd('actions')">+ Add</button></div>
+    <div class="msec">Bonus Actions</div>
+    <div class="em-list" id="em-bonus-list"></div>
+    <div class="em-add-row"><input id="em-bonus-name" placeholder="Bonus action"><textarea id="em-bonus-desc" class="notes-area" placeholder="Description…" style="min-height:34px;font-size:.86rem"></textarea><button class="em-add-btn" onclick="emAdd('bonus')">+ Add</button></div>
+    <div class="msec">Reactions</div>
+    <div class="em-list" id="em-reactions-list"></div>
+    <div class="em-add-row"><input id="em-reaction-name" placeholder="Reaction name"><textarea id="em-reaction-desc" class="notes-area" placeholder="Description…" style="min-height:34px;font-size:.86rem"></textarea><button class="em-add-btn" onclick="emAdd('reactions')">+ Add</button></div>
+    <div class="msec">Legendary Actions</div>
+    <div class="field" style="margin-bottom:5px"><label>Count / Note</label><input id="em-leg-count" placeholder="3 legendary actions…"></div>
+    <div class="em-list" id="em-legendary-list"></div>
+    <div class="em-add-row"><input id="em-legendary-name" placeholder="Legendary action"><textarea id="em-legendary-desc" class="notes-area" placeholder="Description…" style="min-height:34px;font-size:.86rem"></textarea><button class="em-add-btn" onclick="emAdd('legendary')">+ Add</button></div>
+    <div class="msec">DM Notes</div>
+    <div class="field"><textarea id="em-notes" class="notes-area" rows="2" placeholder="Tactics, triggers, lore…"></textarea></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('enemy-maker-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveEnemyTemplate()">Save to Deck</button>
+      <button class="btn btn-ghost" onclick="closeModal('em-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveEnemy()">Save to Deck</button>
     </div>
   </div>
 </div>
 
-<!-- Character modal -->
-<div class="modal-overlay modal-lg" id="char-modal" style="align-items:flex-start;overflow-y:auto;">
-  <div class="modal" style="margin:20px auto;">
+<!-- Character Modal -->
+<div class="modal-overlay modal-lg" id="char-modal" style="align-items:flex-start;overflow-y:auto">
+  <div class="modal" style="margin:14px auto;max-width:660px">
     <div class="modal-title" id="char-modal-title">New Character</div>
-    <div class="g2" style="margin-bottom:8px">
-      <div class="field"><label>Character Name</label><input id="cm-name" placeholder="Aldric Dawnmere"></div>
-      <div class="field"><label>Player Name</label><input id="cm-player" placeholder="Your name"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr;gap:8px;margin-bottom:8px">
-      <div class="field"><label>Class</label><input id="cm-class" placeholder="Paladin"></div>
-      <div class="field"><label>Race</label><input id="cm-race" placeholder="Half-Elf"></div>
-      <div class="field"><label>Level</label><input id="cm-level" type="number" placeholder="5"></div>
-      <div class="field"><label>Prof Bonus</label><input id="cm-prof" type="number" placeholder="3"></div>
-    </div>
-    <div class="g3" style="margin-bottom:8px">
-      <div class="field"><label>Background</label><input id="cm-bg" placeholder="Noble"></div>
-      <div class="field"><label>Alignment</label><input id="cm-align" placeholder="Lawful Good"></div>
-      <div class="field"><label>XP</label><input id="cm-xp" type="number" placeholder="0"></div>
-    </div>
-    <div class="section-sep">Ability Scores</div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px">
-      <div class="field"><label>STR</label><input id="cm-str" type="number" placeholder="10"></div>
-      <div class="field"><label>DEX</label><input id="cm-dex" type="number" placeholder="10"></div>
-      <div class="field"><label>CON</label><input id="cm-con" type="number" placeholder="10"></div>
-      <div class="field"><label>INT</label><input id="cm-int" type="number" placeholder="10"></div>
-      <div class="field"><label>WIS</label><input id="cm-wis" type="number" placeholder="10"></div>
-      <div class="field"><label>CHA</label><input id="cm-cha" type="number" placeholder="10"></div>
-    </div>
-    <div class="section-sep">Combat Stats</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
-      <div class="field"><label>Max HP</label><input id="cm-hp" type="number" placeholder="38"></div>
-      <div class="field"><label>AC</label><input id="cm-ac" type="number" placeholder="18"></div>
-      <div class="field"><label>Speed</label><input id="cm-speed" type="number" placeholder="30"></div>
-      <div class="field"><label>Init Bonus</label><input id="cm-initbonus" type="number" placeholder="2"></div>
-    </div>
-    <div class="g2" style="margin-bottom:8px">
-      <div class="field"><label>Passive Perception</label><input id="cm-pp" type="number" placeholder="14"></div>
-      <div class="field"><label>Spell Save DC</label><input id="cm-spelldc" type="number" placeholder="15"></div>
-    </div>
-    <div class="section-sep">Proficiencies</div>
-    <div class="g2" style="margin-bottom:8px">
-      <div class="field"><label>Saving Throw Profs</label><input id="cm-saves" placeholder="WIS, CHA"></div>
-      <div class="field"><label>Skill Profs</label><input id="cm-skills" placeholder="Persuasion, Insight"></div>
-    </div>
-    <div class="section-sep">Features & Equipment</div>
-    <div class="field" style="margin-bottom:8px">
-      <label>Features & Traits (one per line: Name: Description)</label>
-      <textarea id="cm-features" class="notes-area" rows="4" placeholder="Divine Smite: Extra radiant damage on hit&#10;Lay on Hands: Heal pool of 25 HP"></textarea>
-    </div>
-    <div class="field" style="margin-bottom:8px"><label>Equipment & Weapons</label><input id="cm-equip" placeholder="Longsword (1d8+4), Shield, Chain Mail…"></div>
+    <div class="g2" style="margin-bottom:8px"><div class="field"><label>Character Name</label><input id="cm-name" placeholder="Aldric Dawnmere"></div><div class="field"><label>Player Name</label><input id="cm-player" placeholder="Your name"></div></div>
+    <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr;gap:7px;margin-bottom:8px"><div class="field"><label>Class</label><input id="cm-class" placeholder="Paladin"></div><div class="field"><label>Race</label><input id="cm-race" placeholder="Half-Elf"></div><div class="field"><label>Level</label><input id="cm-level" type="number" placeholder="5"></div><div class="field"><label>Prof Bonus</label><input id="cm-prof" type="number" placeholder="3"></div></div>
+    <div class="g3" style="margin-bottom:8px"><div class="field"><label>Background</label><input id="cm-bg" placeholder="Noble"></div><div class="field"><label>Alignment</label><input id="cm-align" placeholder="Lawful Good"></div><div class="field"><label>XP</label><input id="cm-xp" type="number" placeholder="0"></div></div>
+    <div class="msec">Ability Scores</div>
+    <div class="g6" style="margin-bottom:8px"><div class="field"><label>STR</label><input id="cm-str" type="number" placeholder="10"></div><div class="field"><label>DEX</label><input id="cm-dex" type="number" placeholder="10"></div><div class="field"><label>CON</label><input id="cm-con" type="number" placeholder="10"></div><div class="field"><label>INT</label><input id="cm-int" type="number" placeholder="10"></div><div class="field"><label>WIS</label><input id="cm-wis" type="number" placeholder="10"></div><div class="field"><label>CHA</label><input id="cm-cha" type="number" placeholder="10"></div></div>
+    <div class="msec">Combat Stats</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px"><div class="field"><label>Max HP</label><input id="cm-hp" type="number" placeholder="38"></div><div class="field"><label>AC</label><input id="cm-ac" type="number" placeholder="18"></div><div class="field"><label>Speed</label><input id="cm-speed" type="number" placeholder="30"></div><div class="field"><label>Init Bonus</label><input id="cm-initbonus" type="number" placeholder="2"></div></div>
+    <div class="g2" style="margin-bottom:8px"><div class="field"><label>Passive Perception</label><input id="cm-pp" type="number" placeholder="14"></div><div class="field"><label>Spell Save DC</label><input id="cm-spelldc" type="number" placeholder="15"></div></div>
+    <div class="msec">Proficiencies</div>
+    <div class="g2" style="margin-bottom:8px"><div class="field"><label>Saving Throw Profs</label><input id="cm-saves" placeholder="WIS, CHA"></div><div class="field"><label>Skill Profs</label><input id="cm-skills" placeholder="Persuasion, Insight"></div></div>
+    <div class="msec">Features & Equipment</div>
+    <div class="field" style="margin-bottom:8px"><label>Features (one per line: Name: Desc)</label><textarea id="cm-features" class="notes-area" rows="4" placeholder="Divine Smite: Extra radiant damage&#10;Lay on Hands: Pool of 25 HP"></textarea></div>
+    <div class="field" style="margin-bottom:8px"><label>Equipment</label><input id="cm-equip" placeholder="Longsword (1d8+4), Shield, Chain Mail…"></div>
     <div class="field" style="margin-bottom:8px"><label>Notes / Backstory</label><textarea id="cm-notes" class="notes-area" rows="3"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('char-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveChar()">Save Character</button>
-    </div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('char-modal')">Cancel</button><button class="btn btn-gold" onclick="saveChar()">Save Character</button></div>
   </div>
 </div>
 
 <div id="toast"></div>
 <div class="drag-ghost" id="drag-ghost" style="display:none"></div>
 
-<!-- ═══════════════════════════════════════════════════════
-  JAVASCRIPT
-══════════════════════════════════════════════════════ -->
 <script>
-// ─────────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  SOUND ENGINE — Web Audio API
+// ═══════════════════════════════════════════════════
+let audioCtx=null,soundOn=true;
+function getACtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playTone(freq,dur,type='sine',vol=.18,attack=.01,decay=.1){
+  if(!soundOn)return;
+  try{
+    const ctx=getACtx();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type=type;o.frequency.setValueAtTime(freq,ctx.currentTime);
+    g.gain.setValueAtTime(0,ctx.currentTime);
+    g.gain.linearRampToValueAtTime(vol,ctx.currentTime+attack);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);
+    o.start(ctx.currentTime);o.stop(ctx.currentTime+dur+.05);
+  }catch(e){}
+}
+function sndDeploy(){playTone(220,.08,'sawtooth',.12);setTimeout(()=>playTone(330,.12,'sawtooth',.15),80);setTimeout(()=>playTone(440,.25,'square',.08),180);}
+function sndNextTurn(){playTone(528,.06,'sine',.14);setTimeout(()=>playTone(660,.14,'sine',.18),70);}
+function sndDamage(){playTone(110,.05,'sawtooth',.2);setTimeout(()=>playTone(80,.15,'sawtooth',.14),50);}
+function sndHeal(){playTone(440,.06,'sine',.12);setTimeout(()=>playTone(528,.06,'sine',.14),80);setTimeout(()=>playTone(660,.2,'sine',.1),160);}
+function sndDead(){playTone(200,.1,'sawtooth',.2);setTimeout(()=>playTone(150,.1,'sawtooth',.18),100);setTimeout(()=>playTone(100,.4,'sawtooth',.12),200);}
+function sndAdd(){playTone(400,.05,'sine',.1);setTimeout(()=>playTone(500,.12,'sine',.12),60);}
+function sndCalc(){playTone(660,.05,'sine',.08);}
+function sndSort(){playTone(350,.06,'sine',.1);setTimeout(()=>playTone(440,.06,'sine',.1),80);setTimeout(()=>playTone(528,.12,'sine',.1),160);}
+function toggleSound(){
+  soundOn=!soundOn;
+  const btn=document.getElementById('sound-toggle');
+  btn.textContent=soundOn?'🔔':'🔕';
+  btn.classList.toggle('on',soundOn);
+  if(soundOn)sndAdd();
+}
+
+// ═══════════════════════════════════════════════════
+//  PARTICLE FX
+// ═══════════════════════════════════════════════════
+const canvas=document.getElementById('fx-canvas');
+const ctx2=canvas.getContext('2d');
+let particles=[];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();window.addEventListener('resize',resizeCanvas);
+
+function spawnParticles(x,y,color,count=14,spread=60){
+  for(let i=0;i<count;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=1.5+Math.random()*3.5;
+    particles.push({x,y,vx:Math.cos(angle)*speed*(spread/60),vy:Math.sin(angle)*speed*(spread/60)-2,
+      life:1,decay:.018+Math.random()*.018,size:2+Math.random()*3,color});
+  }
+}
+function spawnGoldBurst(x,y){spawnParticles(x,y,'rgba(224,170,66,',22,80);}
+function spawnRedBurst(x,y){spawnParticles(x,y,'rgba(224,80,64,',18,70);}
+function spawnGreenBurst(x,y){spawnParticles(x,y,'rgba(62,200,120,',16,60);}
+function spawnBlueBurst(x,y){spawnParticles(x,y,'rgba(96,168,224,',14,60);}
+
+function animParticles(){
+  ctx2.clearRect(0,0,canvas.width,canvas.height);
+  particles=particles.filter(p=>p.life>0);
+  for(const p of particles){
+    ctx2.beginPath();
+    ctx2.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+    ctx2.fillStyle=p.color+(p.life.toFixed(2))+')';
+    ctx2.fill();
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.life-=p.decay;p.size*=.97;
+  }
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+function getBtnCenter(el){
+  const r=el.getBoundingClientRect();
+  return{x:r.left+r.width/2,y:r.top+r.height/2};
+}
+
+// ═══════════════════════════════════════════════════
+//  TURN BANNER
+// ═══════════════════════════════════════════════════
+function showTurnBanner(name,type){
+  const b=document.getElementById('turn-banner');
+  const emoji=type==='player'?'⚔':'type'==='enemy'?'💀':'🗡';
+  b.textContent=name+"'s Turn";
+  b.className='show';
+  setTimeout(()=>{b.className='';},1600);
+  // Burst at center
+  setTimeout(()=>{
+    if(type==='player')spawnBlueBurst(window.innerWidth*.5,window.innerHeight*.5);
+    else if(type==='enemy')spawnRedBurst(window.innerWidth*.5,window.innerHeight*.5);
+    else spawnGoldBurst(window.innerWidth*.5,window.innerHeight*.5);
+  },100);
+}
+
+// ═══════════════════════════════════════════════════
+//  DATA — MIMIC
+// ═══════════════════════════════════════════════════
+const MIMIC={
+  id:1e9,name:'Mimic',type:'enemy',cr:'2',
+  size:'Medium',typetag:'monstrosity (shapechanger)',align:'neutral',
+  maxHP:58,ac:12,speed:'15 ft.',
+  str:17,dex:12,con:15,int:5,wis:13,cha:8,
+  skills:'Stealth +5',immun:'Acid',condimmun:'Prone',resist:'',
+  senses:'Darkvision 60 ft., Passive Perception 11',lang:'—',legCount:'',
+  traits:[
+    {name:'Shapechanger',desc:"The mimic can use its action to polymorph into an object or back into its true amorphous form. Its statistics are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies."},
+    {name:'Adhesive (Object Form Only)',desc:'The mimic adheres to anything that touches it. A Huge or smaller creature adhered to the mimic is also grappled by it (escape DC 13). Ability checks made to escape this grapple have disadvantage.'},
+    {name:'False Appearance (Object Form Only)',desc:'While the mimic remains motionless, it is indistinguishable from an ordinary object.'},
+    {name:'Grappler',desc:'The mimic has advantage on attack rolls against any creature grappled by it.'}
+  ],
+  actions:[
+    {name:'Pseudopod',desc:'Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: (1d8+3) bludgeoning damage. If in object form, target is subjected to Adhesive.'},
+    {name:'Bite',desc:'Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: (1d8+3) piercing damage plus (1d8) acid damage.'}
+  ],
+  bonus:[],reactions:[],legendary:[],
+  notes:'Start as object, wait for a PC to touch. Use Adhesive → then Bite on grappled targets for max acid damage.'
+};
+
 const CONDITIONS=['Blinded','Charmed','Deafened','Exhausted','Frightened','Grappled',
   'Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone',
   'Restrained','Stunned','Unconscious','Concentrating','Bloodied','Cursed','Burning','Silenced'];
 
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
 let S={combatants:[],characters:[],deck:[],turn:-1,round:1};
-
-function save(){try{localStorage.setItem('veilara3',JSON.stringify(S));}catch(e){}}
-function load(){try{const d=localStorage.getItem('veilara3');if(d)S={...S,...JSON.parse(d)};}catch(e){}}
+function save(){try{localStorage.setItem('veilara5',JSON.stringify(S));}catch(e){}}
+function load(){
+  try{const d=localStorage.getItem('veilara5');if(d)S={...S,...JSON.parse(d)};}catch(e){}
+  if(!S.deck?.length)S.deck=[MIMIC];
+  else if(!S.deck.find(x=>x.id===MIMIC.id))S.deck.unshift(MIMIC);
+}
 load();
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function gv(id){return document.getElementById(id)?.value||''}
+function gi(id){return parseInt(gv(id))||0}
+function sv(id,v){const el=document.getElementById(id);if(el)el.value=v??''}
+function abMod(s){const m=Math.floor((s-10)/2);return(m>=0?'+':'')+m}
+
+// ═══════════════════════════════════════════════════
 //  TABS
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 document.querySelectorAll('.nav-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -844,55 +835,134 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
   });
 });
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  TOAST
-// ─────────────────────────────────────────────
-function toast(msg){
+// ═══════════════════════════════════════════════════
+function toast(msg,err=false){
   const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2000);
+  el.textContent=msg;el.className=err?'show err':'show';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.className='',2100);
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  MODALS
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
 });
 
-// ─────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function gv(id){return document.getElementById(id).value}
-function gi(id){return parseInt(gv(id))||0}
-function sv(id,v){document.getElementById(id).value=v??''}
-function calcMod(s){const m=Math.floor((s-10)/2);return(m>=0?'+':'')+m}
+// ═══════════════════════════════════════════════════
+//  BUILD STAT BLOCK HTML (shared for deck card + peek)
+// ═══════════════════════════════════════════════════
+function buildStatBlock(e,small=false){
+  const fs=small?'.68rem':'.72rem';
+  let h='';
+  // Ability scores
+  h+=`<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:2px;margin:5px 0">`;
+  [['STR',e.str],['DEX',e.dex],['CON',e.con],['INT',e.int],['WIS',e.wis],['CHA',e.cha]].forEach(([l,v])=>{
+    h+=`<div class="sb-ab"><div class="sb-ab-l">${l}</div><div class="sb-ab-v">${v||'—'}</div><div class="sb-ab-m">${v?abMod(v):''}</div></div>`;
+  });
+  h+='</div>';
+  h+='<div class="sb-div"></div>';
+  const prop=(label,val)=>val?`<div class="sb-prop" style="font-size:${fs}"><b>${label}</b>${esc(val)}</div>`:'';
+  h+=prop('Skills',e.skills)+prop('Damage Immunities',e.immun)+prop('Condition Immunities',e.condimmun);
+  h+=prop('Resistances',e.resist)+prop('Senses',e.senses)+prop('Languages',e.lang)+prop('Challenge',e.cr);
+  const sec=(t)=>`<div class="sb-sec">${t}</div>`;
+  const entry=(arr)=>arr.map(a=>`<div class="sb-entry" style="font-size:${fs}"><i>${esc(a.name)}.</i> ${esc(a.desc)}</div>`).join('');
+  if(e.traits?.length){h+=sec('Traits');h+=entry(e.traits);}
+  if(e.actions?.length){h+=sec('Actions');h+=entry(e.actions);}
+  if(e.bonus?.length){h+=sec('Bonus Actions');h+=entry(e.bonus);}
+  if(e.reactions?.length){h+=sec('Reactions');h+=entry(e.reactions);}
+  if(e.legendary?.length){
+    h+=sec('Legendary Actions');
+    if(e.legCount)h+=`<div class="sb-prop" style="font-size:${fs};font-style:italic;color:var(--text3)">${esc(e.legCount)}</div>`;
+    h+=entry(e.legendary);
+  }
+  if(e.notes)h+=`<div class="sb-div"></div><div class="sb-prop" style="font-size:${fs};font-style:italic;color:var(--text3)"><b>DM Notes</b>${esc(e.notes)}</div>`;
+  return h;
+}
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  RENDER DECK
+// ═══════════════════════════════════════════════════
+function renderDeck(){
+  const scroll=document.getElementById('deck-scroll');
+  if(!S.deck.length){scroll.innerHTML='<div class="empty" style="padding:18px 10px;font-size:.75rem">No enemies yet.<br>Tap + New.</div>';return;}
+  scroll.innerHTML=S.deck.map(e=>{
+    const isBoss=e.type==='boss',isNPC=e.type==='neutral';
+    const depCls=isBoss?'boss-dep':isNPC?'npc-dep':'';
+    const depTxt=isBoss?'⚔ Boss':'⚔ Deploy';
+    const tipType=isBoss?'boss':isNPC?'neutral':'enemy';
+    const metaStr=[e.size&&e.typetag?`${esc(e.size)} ${esc(e.typetag)}`:'',e.align?esc(e.align):''].filter(Boolean).join(', ');
+    return`<div class="dk-card${isBoss?' boss-card':''}" id="dc-${e.id}"
+      draggable="true"
+      ondragstart="onDeckDragStart(event,${e.id})"
+      ondragend="onDeckDragEnd()">
+      <div class="dk-top">
+        <div class="dk-name">${esc(e.name)}</div>
+        <div class="dk-meta">HP<span>${e.maxHP}</span> AC<span>${e.ac}</span>${e.cr?` CR<span>${esc(e.cr)}</span>`:''}
+          <span class="dk-type-pip ${tipType}">${e.type}</span>
+        </div>
+        ${metaStr?`<div style="font-size:.6rem;color:var(--text3);font-style:italic;margin-top:1px">${metaStr}</div>`:''}
+      </div>
+      <div class="dk-actions">
+        <div class="btn-deploy ${depCls}" onclick="deployEnemy(${e.id})">${depTxt}</div>
+        <button class="btn btn-ghost btn-sm" style="padding:3px 5px" onclick="openEnemyMaker(${e.id})">✎</button>
+        <button class="btn btn-danger btn-sm" style="padding:3px 5px" onclick="deleteEnemy(${e.id})">✕</button>
+      </div>
+      <button class="dk-expand-btn" onclick="toggleDkExpand(${e.id})">
+        <span>Stat Block</span><span class="arr">▼</span>
+      </button>
+      <div class="dk-statblock" id="dsb-${e.id}">
+        <div class="dk-sb-inner">${buildStatBlock(e,true)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDkExpand(id){
+  const card=document.getElementById('dc-'+id);if(!card)return;
+  const wasOn=card.classList.contains('expanded');
+  document.querySelectorAll('.dk-card.expanded').forEach(c=>c.classList.remove('expanded'));
+  if(!wasOn){
+    card.classList.add('expanded');
+    setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+  }
+}
+
+// ═══════════════════════════════════════════════════
 //  RENDER COMBATANTS
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 function renderCombatants(){
   const list=document.getElementById('combatant-list');
   if(!S.combatants.length){
-    list.innerHTML='<div class="empty"><div class="ico">⚔</div>Drag an enemy card from the left,<br>or add a combatant using the form →</div>';
+    list.innerHTML='<div class="empty"><div class="ico">⚔</div>Drag an enemy from the left,<br>or add one via the form →</div>';
     updateRoundBar();return;
   }
   list.innerHTML=S.combatants.map((c,i)=>{
     const pct=Math.max(0,Math.min(100,c.currentHP/c.maxHP*100));
-    const hpColor=pct>50?'#40c080':pct>25?'#e0a840':'#e05040';
+    const hpColor=pct>50?'#3ec878':pct>25?'#e0a840':'#e05040';
     const isActive=i===S.turn;
-    const cls=['c-row','t-'+c.type,isActive?'active-turn':'',c.dead?'dead':''].filter(Boolean).join(' ');
-    const conds=(c.conditions||[]).map(cd=>
-      `<span class="cond-tag" onclick="removeCond(${c.id},'${cd}')">${cd}</span>`).join('');
-    return`<div class="${cls}" id="row-${c.id}">
+    const rowCls=['c-row','t-'+c.type,isActive?'active-turn':'',c.dead?'dead':''].filter(Boolean).join(' ');
+    const conds=(c.conditions||[]).map(cd=>`<span class="cond-tag" onclick="removeCond(${c.id},'${cd}')">${cd}</span>`).join('');
+    // Build peek if this combatant has stat data (from deck source)
+    const hasPeek=!!(c.deckRef||c.charRef||(c.traits&&c.traits.length));
+    const peekId=`peek-${c.id}`;
+    let peekHtml='';
+    if(hasPeek){
+      peekHtml=buildCombatantPeek(c);
+    }
+    return`<div class="${rowCls}" id="row-${c.id}">
       <div class="init-val">${c.initiative}</div>
       <div><span class="type-pill ${c.type}">${c.type==='neutral'?'NPC':c.type}</span></div>
       <div>
-        <div class="c-name">${esc(c.name)}</div>
-        ${c.speed?`<div class="c-sub">${c.speed}ft${c.pp?' · PP'+c.pp:''}</div>`:''}
+        <div class="c-name" style="cursor:${hasPeek||c.charRef?'pointer':''}"
+          onclick="${hasPeek?`togglePeek(${c.id})`:''}">
+          ${esc(c.name)}${hasPeek?'<span style="color:var(--text3);font-size:.56rem;margin-left:4px">▿</span>':''}
+        </div>
+        ${c.speed?`<div class="c-sub">${esc(c.speed)}</div>`:''}
       </div>
       <div class="hp-cell">
         <span class="hp-nums" onclick="openHPModal(${c.id})">${c.currentHP}/${c.maxHP}</span>
@@ -904,14 +974,59 @@ function renderCombatants(){
         <span class="cond-add" onclick="openCondModal(${c.id})">+ Cond</span>
       </div>
       <div class="row-acts">
+        ${hasPeek?`<button class="btn btn-ico btn-ghost" title="Stat Block" onclick="togglePeek(${c.id})">📖</button>`:''}
         <button class="btn btn-ico btn-ghost" title="Traits" onclick="openTraitsModal(${c.id})">⚡</button>
-        <button class="btn btn-ico btn-ghost" title="${c.dead?'Revive':'Mark Dead'}" onclick="toggleDead(${c.id})">${c.dead?'💚':'💀'}</button>
+        <button class="btn btn-ico btn-ghost" title="${c.dead?'Revive':'Mark Down'}" onclick="toggleDead(${c.id})">${c.dead?'💚':'💀'}</button>
         <button class="btn btn-ico btn-danger" onclick="removeCombatant(${c.id})">✕</button>
       </div>
+      ${hasPeek?`<div class="stat-peek" id="${peekId}">${peekHtml}</div>`:''}
     </div>`;
   }).join('');
   updateRoundBar();
   updateLinkedDropdown();
+}
+
+function buildCombatantPeek(c){
+  // Try to find source enemy
+  const src=S.deck.find(x=>x.id===c.deckRef);
+  // Try linked char
+  const ch=S.characters.find(x=>x.id==c.linkedChar);
+
+  if(src){
+    let h=`<div class="peek-name">${esc(src.name)}</div>`;
+    if(src.size||src.typetag||src.align)h+=`<div class="peek-meta">${[src.size,src.typetag,src.align].filter(Boolean).map(esc).join(' ')}</div>`;
+    h+=buildStatBlock(src,true);
+    return h;
+  }
+  if(ch){
+    const STATS=['str','dex','con','int','wis','cha'],LBLS=['STR','DEX','CON','INT','WIS','CHA'];
+    let h=`<div class="peek-name">${esc(ch.name)}</div>`;
+    h+=`<div class="peek-meta">${ch.cls||''} Lv.${ch.level} · ${ch.race||''} · ${ch.alignment||''}</div>`;
+    h+='<div class="peek-row">';
+    STATS.forEach((s,i)=>{h+=`<div class="peek-stat"><div class="peek-stat-l">${LBLS[i]}</div><div class="peek-stat-v">${ch[s]||'—'}</div><div class="peek-stat-m">${ch[s]?abMod(ch[s]):''}</div></div>`;});
+    h+='</div>';
+    if(ch.saves?.length)h+=`<div class="peek-prop"><b>Saves</b>${ch.saves.join(', ')}</div>`;
+    if(ch.skills?.length)h+=`<div class="peek-prop"><b>Skills</b>${ch.skills.join(', ')}</div>`;
+    if(ch.equipment)h+=`<div class="peek-prop"><b>Equipment</b>${esc(ch.equipment)}</div>`;
+    if(ch.features?.length){
+      h+='<div class="peek-section">Features</div>';
+      h+=ch.features.map(f=>`<div class="peek-entry"><i>${esc(f.name)}.</i> ${esc(f.desc)}</div>`).join('');
+    }
+    if(ch.notes)h+=`<div class="peek-note">${esc(ch.notes)}</div>`;
+    return h;
+  }
+  // fallback: traits only
+  let h='';
+  if(c.traits?.length){
+    h+='<div class="peek-section">Traits & Abilities</div>';
+    h+=c.traits.map(t=>`<div class="peek-entry"><i>${esc(t.name)}.</i> ${esc(t.desc)}</div>`).join('');
+  }
+  return h||'<div style="color:var(--text3);font-size:.7rem;font-style:italic">No stat data.</div>';
+}
+
+function togglePeek(id){
+  const el=document.getElementById('peek-'+id);if(!el)return;
+  el.classList.toggle('open');
 }
 
 function updateRoundBar(){
@@ -920,48 +1035,42 @@ function updateRoundBar(){
   document.getElementById('active-name').textContent=c?c.name:'—';
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  COMBAT ACTIONS
-// ─────────────────────────────────────────────
-function addCombatant(){
+// ═══════════════════════════════════════════════════
+function addCombatant(evt){
   const name=gv('f-name').trim();
-  if(!name){toast('Name is required!');return;}
+  if(!name){toast('Name is required!',true);return;}
   const maxHP=gi('f-hp')||10;
-  const c={
-    id:Date.now(),name,type:gv('f-type'),
-    initiative:gi('f-init'),maxHP,currentHP:maxHP,
-    ac:gi('f-ac')||10,speed:30,conditions:[],traits:[],dead:false,
-    linkedChar:gv('f-linked')||null
-  };
+  const linkedId=gv('f-linked')||null;
+  const ch=linkedId?S.characters.find(x=>x.id==linkedId):null;
+  const c={id:Date.now(),name,type:gv('f-type'),initiative:gi('f-init'),
+    maxHP:ch?ch.hp:maxHP,currentHP:ch?ch.hp:maxHP,
+    ac:ch?ch.ac:gi('f-ac')||10,speed:ch?(ch.speed+'ft'):30+'ft',
+    conditions:[],traits:[],dead:false,linkedChar:linkedId,deckRef:null};
   S.combatants.push(c);
   if(S.turn===-1)S.turn=0;
   save();renderCombatants();clearForm();
+  sndAdd();spawnGoldBurst(window.innerWidth*.85,window.innerHeight*.3);
   toast(`${name} added`);
 }
-
-function clearForm(){
-  ['f-name','f-init','f-hp','f-ac'].forEach(id=>sv(id,''));
-  sv('f-type','player');sv('f-linked','');
-}
-
+function clearForm(){['f-name','f-init','f-hp','f-ac'].forEach(id=>sv(id,''));sv('f-type','player');sv('f-linked','');}
 function rollInit(){
   const r=Math.floor(Math.random()*20)+1;
-  const el=document.getElementById('f-init');
-  el.value=r;el.classList.add('pop');
-  setTimeout(()=>el.classList.remove('pop'),300);
-  toast('Initiative: '+r);
+  const el=document.getElementById('f-init');el.value=r;el.classList.add('pop');
+  setTimeout(()=>el.classList.remove('pop'),300);toast('Initiative: '+r);sndCalc();
 }
-
 function sortByInit(){
   S.combatants.sort((a,b)=>b.initiative-a.initiative);
-  if(S.combatants.length>0&&S.turn===-1)S.turn=0;
-  save();renderCombatants();
+  if(S.combatants.length&&S.turn===-1)S.turn=0;
+  else if(S.combatants.length)S.turn=0;
+  save();renderCombatants();sndSort();
+  spawnParticles(window.innerWidth*.5,80,'rgba(196,136,42,',10,80);
 }
-
 function nextTurn(){
   if(!S.combatants.length)return;
   const living=S.combatants.filter(c=>!c.dead);
-  if(!living.length){toast('All combatants are down!');return;}
+  if(!living.length){toast('All combatants are down!',true);return;}
   let next=S.turn===-1?0:S.turn+1;
   if(next>=S.combatants.length){next=0;S.round++;}
   let tries=0;
@@ -969,62 +1078,65 @@ function nextTurn(){
     next=(next+1)%S.combatants.length;if(next===0)S.round++;tries++;
   }
   S.turn=next;save();renderCombatants();
-  toast(`${S.combatants[S.turn]?.name}'s turn!`);
+  const c=S.combatants[S.turn];
+  if(c){showTurnBanner(c.name,c.type);sndNextTurn();}
 }
-
 function resetCombat(){
   if(!confirm('Reset combat? Combatants will be cleared.'))return;
-  S.combatants=[];S.turn=-1;S.round=1;
-  save();renderCombatants();
+  S.combatants=[];S.turn=-1;S.round=1;save();renderCombatants();
 }
-
 function removeCombatant(id){
   S.combatants=S.combatants.filter(c=>c.id!==id);
   if(S.turn>=S.combatants.length)S.turn=Math.max(0,S.combatants.length-1);
   if(!S.combatants.length)S.turn=-1;
   save();renderCombatants();
 }
-
 function toggleDead(id){
-  const c=S.combatants.find(x=>x.id===id);
-  if(!c)return;c.dead=!c.dead;save();renderCombatants();
-  toast(c.dead?`${c.name} has fallen.`:`${c.name} revived.`);
+  const c=S.combatants.find(x=>x.id===id);if(!c)return;
+  c.dead=!c.dead;save();renderCombatants();
+  if(c.dead){sndDead();const row=document.getElementById('row-'+id);if(row){const r=row.getBoundingClientRect();spawnRedBurst(r.left+r.width/2,r.top+r.height/2);}toast(`${c.name} has fallen.`);}
+  else{sndHeal();toast(`${c.name} revived.`);}
 }
 
-// ─────────────────────────────────────────────
-//  HP MODAL
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  HP
+// ═══════════════════════════════════════════════════
 let hpTarget=null;
 function openHPModal(id){
   hpTarget=id;const c=S.combatants.find(x=>x.id===id);
   document.getElementById('hp-modal-name').textContent=c.name;
-  sv('hpm-cur',c.currentHP);sv('hpm-max',c.maxHP);
-  openModal('hp-modal');
+  sv('hpm-cur',c.currentHP);sv('hpm-max',c.maxHP);openModal('hp-modal');
 }
 function hpDelta(d){
   const cur=parseInt(gv('hpm-cur'))||0,max=parseInt(gv('hpm-max'))||1;
   sv('hpm-cur',Math.min(max,Math.max(0,cur+d)));
 }
-function hpFull(){sv('hpm-cur',gv('hpm-max'))}
+function hpFull(){sv('hpm-cur',gv('hpm-max'));}
 function saveHP(){
   const c=S.combatants.find(x=>x.id===hpTarget);if(!c)return;
+  const prevHP=c.currentHP;
   c.maxHP=parseInt(gv('hpm-max'))||c.maxHP;
   c.currentHP=Math.min(parseInt(gv('hpm-cur'))||0,c.maxHP);
-  if(c.currentHP<=0&&!c.dead){c.dead=true;toast(`${c.name} has fallen!`);}
+  const row=document.getElementById('row-'+c.id);
+  const rx=row?row.getBoundingClientRect():null;
+  const cx=rx?rx.left+rx.width/2:window.innerWidth*.5;
+  const cy=rx?rx.top+rx.height/2:window.innerHeight*.5;
+  if(c.currentHP<prevHP){sndDamage();spawnRedBurst(cx,cy);row&&row.classList.add('pulse');setTimeout(()=>row?.classList.remove('pulse'),600);}
+  else if(c.currentHP>prevHP){sndHeal();spawnGreenBurst(cx,cy);}
+  if(c.currentHP<=0&&!c.dead){c.dead=true;sndDead();toast(`${c.name} has fallen!`);}
   save();renderCombatants();closeModal('hp-modal');
 }
 
-// ─────────────────────────────────────────────
-//  CONDITIONS MODAL
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  CONDITIONS
+// ═══════════════════════════════════════════════════
 let condTarget=null;
 function openCondModal(id){
   condTarget=id;const c=S.combatants.find(x=>x.id===id);
   document.getElementById('cond-modal-name').textContent=c.name;
   document.getElementById('cond-picker').innerHTML=CONDITIONS.map(cd=>
     `<button class="cond-toggle ${(c.conditions||[]).includes(cd)?'on':''}" onclick="toggleCond(${id},'${cd}',this)">${cd}</button>`
-  ).join('');
-  openModal('cond-modal');
+  ).join('');openModal('cond-modal');
 }
 function toggleCond(id,cond,btn){
   const c=S.combatants.find(x=>x.id===id);if(!c)return;
@@ -1037,253 +1149,204 @@ function removeCond(id,cond){
   c.conditions=(c.conditions||[]).filter(x=>x!==cond);save();renderCombatants();
 }
 
-// ─────────────────────────────────────────────
-//  TRAITS MODAL
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  TRAITS
+// ═══════════════════════════════════════════════════
 let traitsTarget=null;
 function openTraitsModal(id){
   traitsTarget=id;const c=S.combatants.find(x=>x.id===id);
   document.getElementById('traits-modal-name').textContent=c.name;
-  renderTraits(c);openModal('traits-modal');
+  renderTraitsList(c);openModal('traits-modal');
 }
-function renderTraits(c){
+function renderTraitsList(c){
   const el=document.getElementById('traits-list');
-  if(!c.traits?.length){el.innerHTML='<div class="empty" style="padding:12px">No traits yet.</div>';return;}
+  if(!c.traits?.length){el.innerHTML='<div class="empty" style="padding:10px">No traits.</div>';return;}
   el.innerHTML=c.traits.map((t,i)=>`
-    <div class="trait-item">
-      <div style="flex:1"><div class="trait-name">${esc(t.name)}</div>${t.desc?`<div class="trait-desc">${esc(t.desc)}</div>`:''}</div>
-      <span class="trait-rm" onclick="removeTrait(${i})">✕</span>
-    </div>`).join('');
+    <div class="trait-item-m"><div style="flex:1"><div class="t-nm">${esc(t.name)}</div>${t.desc?`<div class="t-ds">${esc(t.desc)}</div>`:''}</div><span class="t-rm" onclick="removeTrait(${i})">✕</span></div>`).join('');
 }
 function addTrait(){
-  const name=document.getElementById('tm-name').value.trim();
-  if(!name){toast('Need a name');return;}
+  const name=document.getElementById('tm-name').value.trim();if(!name){toast('Need a name',true);return;}
   const c=S.combatants.find(x=>x.id===traitsTarget);
   if(!c.traits)c.traits=[];
   c.traits.push({name,desc:document.getElementById('tm-desc').value.trim()});
-  sv('tm-name','');sv('tm-desc','');save();renderTraits(c);
+  sv('tm-name','');sv('tm-desc','');save();renderTraitsList(c);
 }
 function removeTrait(i){
   const c=S.combatants.find(x=>x.id===traitsTarget);if(!c)return;
-  c.traits.splice(i,1);save();renderTraits(c);
+  c.traits.splice(i,1);save();renderTraitsList(c);
 }
-
 function updateLinkedDropdown(){
-  const sel=document.getElementById('f-linked');
-  const val=sel.value;
+  const sel=document.getElementById('f-linked');const val=sel.value;
   sel.innerHTML='<option value="">— None —</option>'+
     S.characters.map(ch=>`<option value="${ch.id}" ${val==ch.id?'selected':''}>${esc(ch.name)}</option>`).join('');
 }
 
-// ─────────────────────────────────────────────
-//  ENEMY DECK
-// ─────────────────────────────────────────────
-let editingEnemy=null;
+// ═══════════════════════════════════════════════════
+//  ENEMY DECK / MAKER
+// ═══════════════════════════════════════════════════
+let emTraits=[],emActions=[],emBonus=[],emReactions=[],emLegendary=[],editingEnemyId=null;
+function getEmArr(key){return key==='traits'?emTraits:key==='actions'?emActions:key==='bonus'?emBonus:key==='reactions'?emReactions:emLegendary;}
+function renderEmList(key){
+  const wrap=document.getElementById(`em-${key}-list`);const arr=getEmArr(key);
+  if(!arr.length){wrap.innerHTML='';return;}
+  wrap.innerHTML=arr.map((item,i)=>`<div class="em-item">
+    <input value="${esc(item.name)}" onchange="getEmArrByKey('${key}')[${i}].name=this.value" style="flex:0 0 120px;font-size:.86rem">
+    <textarea class="notes-area" onchange="getEmArrByKey('${key}')[${i}].desc=this.value" style="min-height:36px;flex:1;font-size:.84rem">${esc(item.desc)}</textarea>
+    <span class="em-item-rm" onclick="emRemove('${key}',${i})">✕</span>
+  </div>`).join('');
+}
+function getEmArrByKey(key){return getEmArr(key);}
+function emAdd(key){
+  const n=document.getElementById(`em-${key}-name`).value.trim();
+  if(!n){toast('Enter a name',true);return;}
+  getEmArr(key).push({name:n,desc:document.getElementById(`em-${key}-desc`).value.trim()});
+  sv(`em-${key}-name`,'');sv(`em-${key}-desc`,'');renderEmList(key);
+}
+function emRemove(key,i){getEmArr(key).splice(i,1);renderEmList(key);}
 
 function openEnemyMaker(id){
-  editingEnemy=id||null;
+  editingEnemyId=id||null;emTraits=[];emActions=[];emBonus=[];emReactions=[];emLegendary=[];
   if(id){
     const e=S.deck.find(x=>x.id===id);
-    document.getElementById('em-title').textContent='Edit Enemy Template';
+    document.getElementById('em-title').textContent='Edit Enemy';
     sv('em-name',e.name);sv('em-type',e.type);sv('em-cr',e.cr);
+    sv('em-size',e.size);sv('em-typetag',e.typetag);sv('em-align',e.align);
     sv('em-hp',e.maxHP);sv('em-ac',e.ac);sv('em-speed',e.speed);
     sv('em-str',e.str);sv('em-dex',e.dex);sv('em-con',e.con);
     sv('em-int',e.int);sv('em-wis',e.wis);sv('em-cha',e.cha);
-    sv('em-traits',e.traitsRaw||'');sv('em-notes',e.notes||'');
+    sv('em-skills',e.skills);sv('em-immun',e.immun);sv('em-condimmun',e.condimmun);
+    sv('em-resist',e.resist);sv('em-senses',e.senses);sv('em-lang',e.lang);
+    sv('em-leg-count',e.legCount);sv('em-notes',e.notes);
+    emTraits=[...(e.traits||[])];emActions=[...(e.actions||[])];
+    emBonus=[...(e.bonus||[])];emReactions=[...(e.reactions||[])];emLegendary=[...(e.legendary||[])];
   } else {
     document.getElementById('em-title').textContent='New Enemy Template';
-    ['em-name','em-cr','em-hp','em-ac','em-speed','em-str','em-dex','em-con','em-int','em-wis','em-cha','em-traits','em-notes']
-      .forEach(id=>sv(id,''));
+    ['em-name','em-cr','em-size','em-typetag','em-align','em-hp','em-ac','em-speed',
+     'em-str','em-dex','em-con','em-int','em-wis','em-cha','em-skills','em-immun',
+     'em-condimmun','em-resist','em-senses','em-lang','em-leg-count','em-notes',
+     'em-trait-name','em-trait-desc','em-action-name','em-action-desc',
+     'em-bonus-name','em-bonus-desc','em-reaction-name','em-reaction-desc',
+     'em-legendary-name','em-legendary-desc'].forEach(id=>sv(id,''));
     sv('em-type','enemy');
   }
-  openModal('enemy-maker-modal');
+  ['traits','actions','bonus','reactions','legendary'].forEach(renderEmList);
+  openModal('em-modal');
 }
-
-function parseTraits(str){
-  if(!str.trim())return[];
-  return str.split(',').map(t=>{
-    const i=t.indexOf(':');
-    return i===-1?{name:t.trim(),desc:''}:{name:t.slice(0,i).trim(),desc:t.slice(i+1).trim()};
-  }).filter(t=>t.name);
-}
-
-function saveEnemyTemplate(){
-  const name=gv('em-name').trim();
-  if(!name){toast('Name required');return;}
-  const e={
-    id:editingEnemy||Date.now(),
-    name,type:gv('em-type'),cr:gv('em-cr'),
-    maxHP:gi('em-hp')||10,ac:gi('em-ac')||10,speed:gi('em-speed')||30,
+function saveEnemy(){
+  const name=gv('em-name').trim();if(!name){toast('Name required',true);return;}
+  const e={id:editingEnemyId||Date.now(),name,type:gv('em-type'),cr:gv('em-cr'),
+    size:gv('em-size'),typetag:gv('em-typetag'),align:gv('em-align'),
+    maxHP:gi('em-hp')||10,ac:gi('em-ac')||10,speed:gv('em-speed')||'30 ft.',
     str:gi('em-str'),dex:gi('em-dex'),con:gi('em-con'),
     int:gi('em-int'),wis:gi('em-wis'),cha:gi('em-cha'),
-    traitsRaw:gv('em-traits'),traits:parseTraits(gv('em-traits')),
-    notes:gv('em-notes')
-  };
-  if(editingEnemy){
-    const idx=S.deck.findIndex(x=>x.id===editingEnemy);
-    if(idx!==-1)S.deck[idx]=e;
-  } else S.deck.push(e);
-  save();renderDeck();closeModal('enemy-maker-modal');
+    skills:gv('em-skills'),immun:gv('em-immun'),condimmun:gv('em-condimmun'),
+    resist:gv('em-resist'),senses:gv('em-senses'),lang:gv('em-lang'),
+    legCount:gv('em-leg-count'),notes:gv('em-notes'),
+    traits:[...emTraits],actions:[...emActions],
+    bonus:[...emBonus],reactions:[...emReactions],legendary:[...emLegendary]};
+  if(editingEnemyId){const idx=S.deck.findIndex(x=>x.id===editingEnemyId);if(idx!==-1)S.deck[idx]=e;}
+  else S.deck.push(e);
+  save();renderDeck();closeModal('em-modal');
+  spawnGoldBurst(window.innerWidth*.15,window.innerHeight*.6);
   toast(`${name} saved to deck`);
 }
-
 function deleteEnemy(id){
   if(!confirm('Delete this enemy template?'))return;
   S.deck=S.deck.filter(x=>x.id!==id);save();renderDeck();
 }
 
-function renderDeck(){
-  const scroll=document.getElementById('deck-scroll');
-  if(!S.deck.length){
-    scroll.innerHTML='<div class="empty" style="padding:20px 10px;font-size:.75rem;">No enemy templates.<br>Tap + New to create one.</div>';
-    return;
-  }
-  scroll.innerHTML=S.deck.map(e=>`
-    <div class="deck-card" draggable="true" id="dc-${e.id}"
-      ondragstart="onDeckDragStart(event,${e.id})"
-      ondragend="onDeckDragEnd(event)">
-      <div class="deck-card-name">${esc(e.name)}</div>
-      <div class="deck-card-stats">
-        HP <span>${e.maxHP}</span> &nbsp;AC <span>${e.ac}</span> ${e.cr?`&nbsp;CR <span>${esc(e.cr)}</span>`:''}
-      </div>
-      <span class="deck-card-type ${e.type}">${e.type}</span>
-      <div class="deck-card-actions">
-        <div class="btn-deploy ${e.type==='neutral'?'neutral-deploy':''}" onclick="deployEnemy(${e.id})">⚔ Deploy</div>
-        <button class="btn btn-ghost btn-sm" style="padding:3px 7px;" onclick="openEnemyMaker(${e.id})">✎</button>
-        <button class="btn btn-danger btn-sm" style="padding:3px 7px;" onclick="deleteEnemy(${e.id})">✕</button>
-      </div>
-    </div>`).join('');
-}
-
-// ─────────────────────────────────────────────
-//  DEPLOY (click or drag)
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  DEPLOY
+// ═══════════════════════════════════════════════════
 let deployTarget=null;
-
 function deployEnemy(id){
-  deployTarget=id;
-  const e=S.deck.find(x=>x.id===id);
-  document.getElementById('init-modal-card').innerHTML=`
-    <div class="init-modal-cname">${esc(e.name)}</div>
-    <div class="init-modal-stats">${e.type} · HP ${e.maxHP} · AC ${e.ac}${e.cr?' · CR '+esc(e.cr):''}</div>`;
-  sv('init-modal-val','');
-  openModal('init-modal');
-  setTimeout(()=>document.getElementById('init-modal-val').focus(),300);
+  deployTarget=id;const e=S.deck.find(x=>x.id===id);
+  document.getElementById('init-card').innerHTML=`<div class="init-cname">${esc(e.name)}</div><div class="init-stats">${e.type}${e.cr?' · CR '+esc(e.cr):''} · HP ${e.maxHP} · AC ${e.ac}</div>`;
+  sv('init-val','');openModal('init-modal');
+  setTimeout(()=>document.getElementById('init-val').focus(),260);
 }
-
-function rollInitModal(bonus=0){
-  const r=Math.floor(Math.random()*20)+1+bonus;
-  sv('init-modal-val',r);toast('Rolled: '+r);
+function rollIM(bonus=0){
+  const r=Math.floor(Math.random()*20)+1+bonus;sv('init-val',r);toast('Rolled: '+r);sndCalc();
 }
-
 function confirmDeploy(){
   const e=S.deck.find(x=>x.id===deployTarget);if(!e)return;
-  const init=parseInt(gv('init-modal-val'))||0;
-  const c={
-    id:Date.now(),
-    name:e.name,type:e.type==='boss'?'enemy':e.type,
+  const init=parseInt(gv('init-val'))||0;
+  const c={id:Date.now(),name:e.name,type:e.type==='boss'?'enemy':e.type,
     initiative:init,maxHP:e.maxHP,currentHP:e.maxHP,
-    ac:e.ac,speed:e.speed||30,
-    conditions:[],traits:[...(e.traits||[])],dead:false,
-    linkedChar:null,pp:0
-  };
+    ac:e.ac,speed:e.speed||'30 ft.',
+    conditions:[],traits:[...(e.traits||[]),...(e.actions||[]),...(e.bonus||[]),...(e.reactions||[])],
+    dead:false,linkedChar:null,deckRef:e.id};
   S.combatants.push(c);
   if(S.turn===-1)S.turn=0;
   save();renderCombatants();closeModal('init-modal');
-  toast(`${e.name} deployed!`);
+  setTimeout(()=>{
+    const row=document.getElementById('row-'+c.id);
+    if(row){row.classList.add('just-deployed');const r=row.getBoundingClientRect();spawnRedBurst(r.left+r.width/2,r.top+r.height/2);}
+  },50);
+  sndDeploy();toast(`${e.name} deployed! (Init ${init})`);
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  DRAG & DROP
-// ─────────────────────────────────────────────
-let draggingDeckId=null;
+// ═══════════════════════════════════════════════════
+let draggingId=null;
 const ghost=document.getElementById('drag-ghost');
-
 function onDeckDragStart(e,id){
-  draggingDeckId=id;
-  const card=S.deck.find(x=>x.id===id);
+  draggingId=id;const card=S.deck.find(x=>x.id===id);
   ghost.textContent=card.name;ghost.style.display='block';
   e.dataTransfer.effectAllowed='copy';
-  e.dataTransfer.setDragImage(ghost,80,20);
+  e.dataTransfer.setDragImage(ghost,80,18);
   document.getElementById('dc-'+id).classList.add('dragging');
   document.getElementById('combat-dropzone').classList.add('visible');
 }
-
 function onDeckDragEnd(){
-  if(draggingDeckId)document.getElementById('dc-'+draggingDeckId)?.classList.remove('dragging');
-  draggingDeckId=null;ghost.style.display='none';
-  document.getElementById('combat-dropzone').classList.remove('visible');
-  document.getElementById('combat-dropzone').classList.remove('drag-over');
+  if(draggingId)document.getElementById('dc-'+draggingId)?.classList.remove('dragging');
+  draggingId=null;ghost.style.display='none';
+  document.getElementById('combat-dropzone').classList.remove('visible','drag-over');
   document.getElementById('deck-dropzone').classList.remove('drag-over');
 }
+function onCombatDragOver(e){if(!draggingId)return;e.preventDefault();e.dataTransfer.dropEffect='copy';document.getElementById('combat-dropzone').classList.add('drag-over');}
+function onCombatDragLeave(e){if(!e.currentTarget.contains(e.relatedTarget))document.getElementById('combat-dropzone').classList.remove('drag-over');}
+function onDropToCombat(e){e.preventDefault();if(draggingId)deployEnemy(draggingId);document.getElementById('combat-dropzone').classList.remove('drag-over');}
+function onDeckDragOver(e){e.preventDefault();document.getElementById('deck-dropzone').classList.add('drag-over');}
+function onDeckDragLeave(){document.getElementById('deck-dropzone').classList.remove('drag-over');}
+function onDropToDeck(e){e.preventDefault();document.getElementById('deck-dropzone').classList.remove('drag-over');}
 
-function onCombatDragOver(e){
-  if(!draggingDeckId)return;
-  e.preventDefault();e.dataTransfer.dropEffect='copy';
-  document.getElementById('combat-dropzone').classList.add('drag-over');
-}
-function onCombatDragLeave(e){
-  if(!e.currentTarget.contains(e.relatedTarget))
-    document.getElementById('combat-dropzone').classList.remove('drag-over');
-}
-function onDropToCombat(e){
-  e.preventDefault();
-  if(draggingDeckId)deployEnemy(draggingDeckId);
-  document.getElementById('combat-dropzone').classList.remove('drag-over');
-}
-
-function onDeckDragOver(e){
-  e.preventDefault();
-  document.getElementById('deck-dropzone').classList.add('drag-over');
-}
-function onDeckDragLeave(){
-  document.getElementById('deck-dropzone').classList.remove('drag-over');
-}
-function onDropToDeck(e){
-  e.preventDefault();
-  document.getElementById('deck-dropzone').classList.remove('drag-over');
-}
-
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  CALCULATOR
-// ─────────────────────────────────────────────
-let calcExpr='';let calcHasResult=false;
-function updateCalcDisplay(){
-  document.getElementById('calc-display').textContent=calcExpr||'0';
-}
-function calcInput(ch){
+// ═══════════════════════════════════════════════════
+let calcExpr='',calcHasResult=false;
+function updateCD(){document.getElementById('calc-display').textContent=calcExpr||'0';}
+function calcIn(ch){
   if(calcHasResult&&!isNaN(ch)&&ch!=='.'){calcExpr='';calcHasResult=false;}
-  else if(calcHasResult){calcHasResult=false;}
-  calcExpr+=ch;updateCalcDisplay();
+  else if(calcHasResult)calcHasResult=false;
+  calcExpr+=ch;updateCD();sndCalc();
 }
-function calcClear(){calcExpr='';calcHasResult=false;updateCalcDisplay();}
-function calcDel(){calcExpr=calcExpr.slice(0,-1);updateCalcDisplay();}
-function calcEquals(){
+function calcClear(){calcExpr='';calcHasResult=false;updateCD();}
+function calcDel(){calcExpr=calcExpr.slice(0,-1);updateCD();}
+function calcEq(){
   try{
     const safe=calcExpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
     const r=Function('"use strict";return('+safe+')')();
-    calcExpr=String(Math.round(r*10000)/10000);
-    calcHasResult=true;updateCalcDisplay();
-  }catch(e){calcExpr='Error';updateCalcDisplay();setTimeout(calcClear,1000);}
+    calcExpr=String(Math.round(r*10000)/10000);calcHasResult=true;updateCD();
+    sndAdd();spawnParticles(window.innerWidth*.88,window.innerHeight*.58,'rgba(224,170,66,',8,40);
+  }catch(e){calcExpr='Error';updateCD();setTimeout(calcClear,900);}
 }
-function focusCalc(){}
-
-// Also support keyboard input when nothing else is focused
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
-  if(/^[0-9]$/.test(e.key))calcInput(e.key);
-  else if(e.key==='+')calcInput('+');
-  else if(e.key==='-')calcInput('−');
-  else if(e.key==='*')calcInput('×');
-  else if(e.key==='/')calcInput('÷');
-  else if(e.key==='Enter'||e.key==='=')calcEquals();
+  if(/^[0-9]$/.test(e.key))calcIn(e.key);
+  else if(e.key==='+')calcIn('+');
+  else if(e.key==='-')calcIn('−');
+  else if(e.key==='*')calcIn('×');
+  else if(e.key==='/')calcIn('÷');
+  else if(e.key==='Enter'||e.key==='=')calcEq();
   else if(e.key==='Backspace')calcDel();
   else if(e.key==='Escape')calcClear();
 });
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  CHARACTER SHEETS
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 let editingChar=null;
 function openCharModal(id){
   editingChar=id||null;
@@ -1309,43 +1372,32 @@ function openCharModal(id){
   }
   openModal('char-modal');
 }
-
 function saveChar(){
-  const name=gv('cm-name').trim();if(!name){toast('Name required');return;}
+  const name=gv('cm-name').trim();if(!name){toast('Name required',true);return;}
   const feats=gv('cm-features').split('\n').filter(l=>l.trim()).map(l=>{
-    const i=l.indexOf(':');
-    return i===-1?{name:l.trim(),desc:''}:{name:l.slice(0,i).trim(),desc:l.slice(i+1).trim()};
+    const i=l.indexOf(':');return i===-1?{name:l.trim(),desc:''}:{name:l.slice(0,i).trim(),desc:l.slice(i+1).trim()};
   });
-  const ch={
-    id:editingChar||Date.now(),
-    name,player:gv('cm-player'),cls:gv('cm-class'),race:gv('cm-race'),
-    level:gi('cm-level')||1,prof:gi('cm-prof'),
-    background:gv('cm-bg'),alignment:gv('cm-align'),xp:gi('cm-xp'),
-    str:gi('cm-str'),dex:gi('cm-dex'),con:gi('cm-con'),
-    int:gi('cm-int'),wis:gi('cm-wis'),cha:gi('cm-cha'),
-    hp:gi('cm-hp'),ac:gi('cm-ac'),speed:gi('cm-speed'),
-    initBonus:gi('cm-initbonus'),pp:gi('cm-pp'),spellDC:gi('cm-spelldc'),
+  const ch={id:editingChar||Date.now(),name,player:gv('cm-player'),cls:gv('cm-class'),race:gv('cm-race'),
+    level:gi('cm-level')||1,prof:gi('cm-prof'),background:gv('cm-bg'),alignment:gv('cm-align'),xp:gi('cm-xp'),
+    str:gi('cm-str'),dex:gi('cm-dex'),con:gi('cm-con'),int:gi('cm-int'),wis:gi('cm-wis'),cha:gi('cm-cha'),
+    hp:gi('cm-hp'),ac:gi('cm-ac'),speed:gi('cm-speed'),initBonus:gi('cm-initbonus'),
+    pp:gi('cm-pp'),spellDC:gi('cm-spelldc'),
     saves:gv('cm-saves').split(',').map(x=>x.trim()).filter(Boolean),
     skills:gv('cm-skills').split(',').map(x=>x.trim()).filter(Boolean),
-    features:feats,equipment:gv('cm-equip'),notes:gv('cm-notes')
-  };
+    features:feats,equipment:gv('cm-equip'),notes:gv('cm-notes')};
   if(editingChar){const i=S.characters.findIndex(x=>x.id===editingChar);if(i!==-1)S.characters[i]=ch;}
   else S.characters.push(ch);
-  save();renderChars();updateLinkedDropdown();closeModal('char-modal');toast(`${name} saved!`);
+  save();renderChars();updateLinkedDropdown();closeModal('char-modal');
+  spawnGoldBurst(window.innerWidth*.5,window.innerHeight*.5);sndDeploy();
+  toast(`${name} saved!`);
 }
-
 function deleteChar(id){
   if(!confirm('Delete this character?'))return;
-  S.characters=S.characters.filter(x=>x.id!==id);
-  save();renderChars();updateLinkedDropdown();
+  S.characters=S.characters.filter(x=>x.id!==id);save();renderChars();updateLinkedDropdown();
 }
-
 function renderChars(){
   const grid=document.getElementById('char-grid');
-  if(!S.characters.length){
-    grid.innerHTML='<div class="empty"><div class="ico">📜</div>No characters yet. Create one above!</div>';
-    return;
-  }
+  if(!S.characters.length){grid.innerHTML='<div class="empty"><div class="ico">📜</div>No characters yet.</div>';return;}
   const STATS=['str','dex','con','int','wis','cha'],LABELS=['STR','DEX','CON','INT','WIS','CHA'];
   grid.innerHTML=S.characters.map(ch=>`
     <div class="char-card">
@@ -1355,59 +1407,55 @@ function renderChars(){
           <div class="char-meta">${ch.cls||'—'} · ${ch.race||'—'}${ch.background?' · '+esc(ch.background):''}</div>
           ${ch.player?`<div class="char-meta" style="margin-top:1px">Player: ${esc(ch.player)}</div>`:''}
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
           <span class="char-lvl">Lv. ${ch.level}</span>
-          <div class="char-hdr-btns">
+          <div style="display:flex;gap:3px">
             <button class="btn btn-ghost btn-sm" onclick="openCharModal(${ch.id})">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="deleteChar(${ch.id})">Del</button>
           </div>
         </div>
       </div>
       <div class="char-body">
-        <div class="core-row">
-          <div class="core-box"><div class="core-lbl">HP</div><div class="core-val">${ch.hp||'—'}</div></div>
-          <div class="core-box"><div class="core-lbl">AC</div><div class="core-val">${ch.ac||'—'}</div></div>
-          <div class="core-box"><div class="core-lbl">Speed</div><div class="core-val">${ch.speed||30}<span style="font-size:.6em;font-weight:400">ft</span></div></div>
-        </div>
-        <div class="stat-row">
-          ${STATS.map((s,i)=>`<div class="stat-box">
-            <label>${LABELS[i]}</label>
-            <div class="stat-score">${ch[s]||'—'}</div>
-            <div class="stat-mod">${ch[s]?calcMod(ch[s]):''}</div>
-          </div>`).join('')}
-        </div>
+        <div class="core-row"><div class="core-box"><div class="core-lbl">HP</div><div class="core-val">${ch.hp||'—'}</div></div><div class="core-box"><div class="core-lbl">AC</div><div class="core-val">${ch.ac||'—'}</div></div><div class="core-box"><div class="core-lbl">Speed</div><div class="core-val">${ch.speed||30}<span style="font-size:.6em;font-weight:400">ft</span></div></div></div>
+        <div class="stat-row">${STATS.map((s,i)=>`<div class="stat-box"><label>${LABELS[i]}</label><div class="stat-score">${ch[s]||'—'}</div><div class="stat-mod">${ch[s]?abMod(ch[s]):''}</div></div>`).join('')}</div>
         <div class="chip-row">
           ${ch.initBonus?`<span class="chip chip-gold">Init +${ch.initBonus}</span>`:''}
           ${ch.pp?`<span class="chip chip-blue">PP ${ch.pp}</span>`:''}
-          ${ch.spellDC?`<span class="chip chip-blue">Spell DC ${ch.spellDC}</span>`:''}
+          ${ch.spellDC?`<span class="chip chip-blue">DC ${ch.spellDC}</span>`:''}
           ${ch.prof?`<span class="chip chip-gold">Prof +${ch.prof}</span>`:''}
           ${ch.alignment?`<span class="chip chip-gold">${esc(ch.alignment)}</span>`:''}
         </div>
         ${ch.saves?.length?`<div class="chip-row">${ch.saves.map(s=>`<span class="chip chip-jade">Save: ${esc(s)}</span>`).join('')}</div>`:''}
-        ${ch.skills?.length?`<div style="font-size:.77rem;color:var(--text3);margin-bottom:7px;font-style:italic"><b style="font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.1em;color:var(--text3);">Skills </b>${esc(ch.skills.join(', '))}</div>`:''}
-        ${ch.equipment?`<div style="font-size:.78rem;color:var(--text2);margin-bottom:8px">⚔ ${esc(ch.equipment).slice(0,120)}${ch.equipment.length>120?'…':''}</div>`:''}
-        ${ch.features?.length?`<div class="feat-list">${ch.features.slice(0,4).map(f=>`<div class="feat-item"><b>${esc(f.name)}</b>${esc(f.desc)}</div>`).join('')}${ch.features.length>4?`<div style="font-size:.7rem;color:var(--text3);padding:3px 8px;font-style:italic">+${ch.features.length-4} more…</div>`:''}</div>`:''}
-        ${ch.notes?`<div style="margin-top:9px;font-size:.77rem;color:var(--text3);font-style:italic;border-top:1px solid var(--border);padding-top:7px">${esc(ch.notes).slice(0,160)}${ch.notes.length>160?'…':''}</div>`:''}
+        ${ch.skills?.length?`<div style="font-size:.72rem;color:var(--text3);margin-bottom:6px;font-style:italic"><b style="font-family:'Cinzel',serif;font-size:.5rem;color:var(--text3)">Skills </b>${esc(ch.skills.join(', '))}</div>`:''}
+        ${ch.equipment?`<div style="font-size:.73rem;color:var(--text2);margin-bottom:7px">⚔ ${esc(ch.equipment).slice(0,120)}${ch.equipment.length>120?'…':''}</div>`:''}
+        ${ch.features?.length?`<div class="feat-list">${ch.features.slice(0,4).map(f=>`<div class="feat-item"><b>${esc(f.name)}</b>${esc(f.desc)}</div>`).join('')}${ch.features.length>4?`<div style="font-size:.66rem;color:var(--text3);padding:3px 7px;font-style:italic">+${ch.features.length-4} more…</div>`:''}</div>`:''}
+        ${ch.notes?`<div style="margin-top:8px;font-size:.72rem;color:var(--text3);font-style:italic;border-top:1px solid var(--border);padding-top:7px">${esc(ch.notes).slice(0,160)}${ch.notes.length>160?'…':''}</div>`:''}
       </div>
     </div>`).join('');
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  NOTES PERSISTENCE
-// ─────────────────────────────────────────────
-const savedNotes=localStorage.getItem('veilara3-notes');
-if(savedNotes)document.getElementById('combat-notes').value=savedNotes;
-document.getElementById('combat-notes').addEventListener('input',function(){
-  localStorage.setItem('veilara3-notes',this.value);
-});
+// ═══════════════════════════════════════════════════
+const sn=localStorage.getItem('veilara5-notes');
+if(sn)document.getElementById('combat-notes').value=sn;
+document.getElementById('combat-notes').addEventListener('input',function(){localStorage.setItem('veilara5-notes',this.value);});
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  INIT
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 renderCombatants();
 renderChars();
 renderDeck();
 updateLinkedDropdown();
+
+// Ambient ember particles every few seconds
+setInterval(()=>{
+  if(Math.random()>.7)return;
+  const x=Math.random()*window.innerWidth;
+  particles.push({x,y:window.innerHeight,vx:(Math.random()-.5)*.5,vy:-1.5-Math.random()*1.5,
+    life:1,decay:.006+Math.random()*.006,size:1+Math.random()*1.5,color:'rgba(196,136,42,'});
+},400);
 </script>
 </body>
 </html>
